@@ -12,15 +12,14 @@ public class DrawPath : MonoBehaviour
     private Boolean _isDrawing = false;
     private Camera _camera;
 
-    [FormerlySerializedAs("OnShapeDrawn")] 
-    public UnityEvent onShapeDrawn = new UnityEvent();
+    [FormerlySerializedAs("OnShapeDrawn")] public UnityEvent onShapeDrawn = new UnityEvent();
 
     public Vector3[] GetPoints()
     {
         return this._path.ToArray();
     }
-    
-    
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,12 +30,18 @@ public class DrawPath : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !_isDrawing)
+        // if (Input.GetMouseButtonDown(0) && !_isDrawing)
+        //     StartDrawing();
+        // else if (Input.GetMouseButtonUp(0))
+        //     StopDrawing();
+        //
+        // if (_isDrawing)
+        //     Draw();
+        if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Began)
             StartDrawing();
-        else if (Input.GetMouseButtonUp(0))
+        if (Input.touches.Length == 1 && Input.touches[0].phase == TouchPhase.Ended)
             StopDrawing();
-
-        if (_isDrawing)
+        if (_isDrawing && Input.touches.Length == 1)
             Draw();
     }
 
@@ -57,7 +62,8 @@ public class DrawPath : MonoBehaviour
     {
         Vector2 point;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform,
-            Input.mousePosition, _camera, out point);
+            Input.touches[0].position, _camera, out point);
+        
         this._path.Add(transform.TransformPoint(point));
         this._lineRenderer.positionCount = _path.Count;
         this._lineRenderer.SetPositions(this._path.ToArray());
