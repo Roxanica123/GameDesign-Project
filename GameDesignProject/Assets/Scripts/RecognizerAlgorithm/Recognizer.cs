@@ -62,11 +62,12 @@ using System.IO;
 using System.Xml;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using UnityEngine;
 using WobbrockLib;
 using WobbrockLib.Extensions;
+using Debug = System.Diagnostics.Debug;
 
 namespace Recognizer.Dollar
 {
@@ -87,7 +88,7 @@ namespace Recognizer.Dollar
         public event ProgressEventHandler ProgressChangedEvent;
 
         //private Hashtable _gestures;
-        private Dictionary<string, Unistroke> _gestures;
+        protected Dictionary<string, Unistroke> _gestures;
 
         #endregion
 
@@ -359,7 +360,8 @@ namespace Recognizer.Dollar
             XmlTextReader reader = null;
             try
             {
-                reader = new XmlTextReader(filename);
+                TextAsset fileContent = Resources.Load<TextAsset>(filename);
+                reader = new XmlTextReader(new StringReader(fileContent.text));
                 reader.WhitespaceHandling = WhitespaceHandling.None;
                 reader.MoveToContent();
 
