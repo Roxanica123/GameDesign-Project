@@ -6,36 +6,19 @@ namespace Recognizer
 {
     public class Unistroke
     {
-        private string name;
-        private List<Point> points;
-        private float radians;
+        public string Name { get; set; }
+        public List<Point> Points { get; set; }
+        public float Radians { get; set; }
 
         public Unistroke(string name, List<Point> points)
         {
-            this.name = name;
-            this.points = points;
-            radians = MathUtility.IndicativeAngle(this.points);
-            this.points = MathUtility.RotateBy(this.points, -radians);
-            this.points = MathUtility.ScaleTo(this.points, (float) 250.0);
-            this.points = MathUtility.TranslateTo(this.points, new Point((float) 0.0, (float) 0.0));
-        }
+            this.Name = name;
+            this.Points = points;
 
-        public string Name
-        {
-            get => name;
-            set => name = value;
-        }
-
-        public List<Point> Points
-        {
-            get => points;
-            set => points = value;
-        }
-
-        public float Radians
-        {
-            get => radians;
-            set => radians = value;
+            Radians = MathUtility.IndicativeAngle(this.Points);
+            this.Points = MathUtility.RotateBy(this.Points, -Radians);
+            this.Points = MathUtility.ScaleTo(this.Points, (float) 250.0);
+            this.Points = MathUtility.TranslateTo(this.Points, new Point((float) 0.0, (float) 0.0));
         }
     }
 }

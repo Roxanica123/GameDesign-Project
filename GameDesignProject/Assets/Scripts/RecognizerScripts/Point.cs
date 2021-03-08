@@ -6,25 +6,13 @@ namespace Recognizer
 {
     public class Point
     {
-        private float x;
-        private float y;
-
+        public float X { get; set; }
+        public float Y { get; set; }
+    
         public Point(float x, float y)
         {
-            this.x = x;
-            this.y = y;
-        }
-
-        public float X
-        {
-            get => x;
-            set => x = value;
-        }
-
-        public float Y
-        {
-            get => y;
-            set => y = value;
+            X = x;
+            Y = y;
         }
     }
 }
