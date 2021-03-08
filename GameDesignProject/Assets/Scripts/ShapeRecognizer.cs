@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using RecognizerAlgo = Recognizer.DollarRecognizer;
 using Point = Recognizer.Point;
