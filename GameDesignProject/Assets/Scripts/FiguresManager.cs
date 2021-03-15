@@ -11,6 +11,7 @@ public class FiguresManager : MonoBehaviour
     private Transform _notesTransform;
     private GameObject _notePrefab;
     private List<Note> _notesList;
+    private List<Note> _notesToRemove;
     static Vector3 _spawnPoint;
     static Vector3 _endPoint;
     private float _timer = 0;
@@ -51,6 +52,8 @@ public class FiguresManager : MonoBehaviour
         {
             return _greenCollider.OverlapPoint(this._reference.transform.position);
         }
+
+        public GameObject GameObject => _reference;
     }
 
 
@@ -62,14 +65,24 @@ public class FiguresManager : MonoBehaviour
         this._notesTransform = GameObject.Find("Notes").transform;
         this._notePrefab = Resources.Load<GameObject>("Prefabs/Dummy");
         this._notesList = new List<Note>();
+        this._notesToRemove = new List<Note>();
         _greenCollider = GameObject.Find("GreenZone").GetComponent<BoxCollider2D>();
     }
 
     void Update()
     {
         this._timer += Time.deltaTime;
+
         foreach (Note note in _notesList)
+        {
             note.UpdateY(_timer);
+            if (note.HasPassedEndpoint())
+            {
+                Destroy(note.GameObject);
+            }
+        }
+
+        _notesList.RemoveAll(note => note.HasPassedEndpoint());
 
         if (_timer - _lastSpawnTime >= 2)
         {
