@@ -17,7 +17,15 @@ public class FiguresManager : MonoBehaviour
     private float _timer = 0;
     private float _lastSpawnTime = 0;
     static BoxCollider2D _greenCollider;
+    static BoxCollider2D _redCollider1;
+    static BoxCollider2D _redCollider2;
     private ShapeRecognizer _shapeRecognizer;
+
+    private enum ScoreZone
+    {
+        GREEN,
+        RED
+    }
 
     private class Note
     {
@@ -48,9 +56,15 @@ public class FiguresManager : MonoBehaviour
             return this._reference.transform.position.y < _endPoint.y;
         }
 
-        public bool IsInFrontOfScoreZone()
+        public bool IsInFrontOfScoreZone(ScoreZone zone)
         {
-            return _greenCollider.OverlapPoint(this._reference.transform.position);
+            if (zone == ScoreZone.GREEN)
+                return _greenCollider.OverlapPoint(this._reference.transform.position);
+            else
+            {
+                return  _redCollider1.OverlapPoint(this._reference.transform.position) ||
+                        _redCollider2.OverlapPoint(this._reference.transform.position);
+            }
         }
 
         public GameObject GameObject => _reference;
@@ -67,6 +81,8 @@ public class FiguresManager : MonoBehaviour
         this._notesList = new List<Note>();
         this._notesToRemove = new List<Note>();
         _greenCollider = GameObject.Find("GreenZone").GetComponent<BoxCollider2D>();
+        _redCollider1 = GameObject.Find("RedZone1").GetComponent<BoxCollider2D>();
+        _redCollider2 = GameObject.Find("RedZone2").GetComponent<BoxCollider2D>();
     }
 
     void Update()
@@ -105,9 +121,13 @@ public class FiguresManager : MonoBehaviour
 
         foreach (Note note in _notesList)
         {
-            if (note.IsInFrontOfScoreZone())
+            if (note.IsInFrontOfScoreZone(ScoreZone.GREEN))
             {
                 Debug.Log("Wooo hit a note in the green zone");
+            }
+            else if(note.IsInFrontOfScoreZone(ScoreZone.RED))
+            {
+                Debug.Log("Wooo hit a note in the red zone");
             }
         }
     }
