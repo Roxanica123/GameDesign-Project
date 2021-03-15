@@ -1,5 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.IO;
+using System.Text;
+using Newtonsoft.Json;
+using UnityEngine;
+using System.Linq;
+
 
 namespace Recognizer
 {
