@@ -1,13 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 using RecognizerAlgo = Recognizer.DollarRecognizer;
 using Point = Recognizer.Point;
+
 public class ShapeRecognizer : MonoBehaviour
 {
     private DrawPath _drawPath;
     private RecognizerAlgo _recognizer = new RecognizerAlgo();
-    
-    
+    [SerializeField] private double accuracyTreshold = 0.7;
+    [FormerlySerializedAs("OnFigure")] public UnityEvent onFigure = new UnityEvent();
+
+    private string figureDrawn = "";
+
     // Start is called before the first frame update
     void Start()
     {
@@ -17,14 +23,17 @@ public class ShapeRecognizer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     public void OnShapeDrawn()
     {
         Vector3[] points = this._drawPath.GetPoints();
         var result = _recognizer.Recognize(Vector3ToTimePointF(points));
-        Debug.Log($"Shape: {result.Name} with accuracy {result.Score}");
+        if (result.Score >= accuracyTreshold)
+        {
+            figureDrawn = result.Name;
+            onFigure.Invoke();
+        }
     }
 
     private List<Point> Vector3ToTimePointF(Vector3[] points)
@@ -34,6 +43,12 @@ public class ShapeRecognizer : MonoBehaviour
         {
             shape.Add(new Point(point.x, point.y));
         }
+
         return shape;
+    }
+
+    public string Shape
+    {
+        get { return figureDrawn; }
     }
 }
