@@ -58,12 +58,13 @@ public class FiguresManager : MonoBehaviour
 
         public bool IsInFrontOfScoreZone(ScoreZone zone)
         {
+            Vector3 point = this._reference.transform.position;
             if (zone == ScoreZone.GREEN)
-                return _greenCollider.OverlapPoint(this._reference.transform.position);
+                return _greenCollider.OverlapPoint(point);
             else
             {
-                return  _redCollider1.OverlapPoint(this._reference.transform.position) ||
-                        _redCollider2.OverlapPoint(this._reference.transform.position);
+                return _redCollider1.OverlapPoint(point) ||
+                       _redCollider2.OverlapPoint(point);
             }
         }
 
@@ -74,8 +75,8 @@ public class FiguresManager : MonoBehaviour
     void Start()
     {
         _shapeRecognizer = GameObject.Find("GameManager").GetComponent<ShapeRecognizer>();
-        _spawnPoint = new Vector3(0, 1000, -5);
-        _endPoint = new Vector3(0, -870, -5);
+        _spawnPoint = new Vector3(0, Screen.height / 2.0f, -5);
+        _endPoint = new Vector3(0, -Screen.height / 2.0f, -5);
         this._notesTransform = GameObject.Find("Notes").transform;
         this._notePrefab = Resources.Load<GameObject>("Prefabs/Dummy");
         this._notesList = new List<Note>();
@@ -125,7 +126,7 @@ public class FiguresManager : MonoBehaviour
             {
                 Debug.Log("Wooo hit a note in the green zone");
             }
-            else if(note.IsInFrontOfScoreZone(ScoreZone.RED))
+            else if (note.IsInFrontOfScoreZone(ScoreZone.RED))
             {
                 Debug.Log("Wooo hit a note in the red zone");
             }
