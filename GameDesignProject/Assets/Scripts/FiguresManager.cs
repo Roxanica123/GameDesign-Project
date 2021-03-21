@@ -47,6 +47,7 @@ public class FiguresManager : MonoBehaviour
             note.UpdateY(_timer);
             if (note.HasPassedEndpoint())
             {
+                scoreManager.GetScoreUpdate(note.GetPosition());
                 Destroy(note.GameObject);
             }
         }
@@ -72,8 +73,8 @@ public class FiguresManager : MonoBehaviour
         foreach (Note note in _notesList)
         {
             var position = note.GetPosition();
-            Debug.Log(scoreManager.GetScoreUpdate(position));
-            Debug.Log(scoreManager.TotalScore);
+            scoreManager.GetScoreUpdate(position);
+            //Debug.Log(scoreManager.TotalScore);
         }
     }
 }

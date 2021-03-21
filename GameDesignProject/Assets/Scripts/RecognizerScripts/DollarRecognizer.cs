@@ -23,12 +23,11 @@ namespace Recognizer
         {
             var checkUnistrokes = JsonConvert.DeserializeObject<List<Unistroke>>(File.ReadAllText($"{path}check"));
             var circleUnistrokes = JsonConvert.DeserializeObject<List<Unistroke>>(File.ReadAllText($"{path}cerc"));
-            var lineUnistrokes = JsonConvert.DeserializeObject<List<Unistroke>>(File.ReadAllText($"{path}linie"));
+            //var lineUnistrokes = JsonConvert.DeserializeObject<List<Unistroke>>(File.ReadAllText($"{path}linie"));
 
             Unistrokes = new List<Unistroke>()
                 .Concat(circleUnistrokes)
                 .Concat(checkUnistrokes)
-                .Concat(lineUnistrokes)
                 .ToList();
         }
 
@@ -36,7 +35,7 @@ namespace Recognizer
         public Result Recognize(List<Point> points)
         {
             var candidate = new Unistroke("Cerc", points);
-            candidates.Add(candidate);
+            //candidates.Add(candidate);
             //File.WriteAllText($"{path}cerc", JsonConvert.SerializeObject(candidates));
             var u = -1;
 

@@ -32,6 +32,7 @@ public class ShapeRecognizer : MonoBehaviour
         if (result.Score >= accuracyTreshold)
         {
             figureDrawn = result.Name;
+            Debug.Log(figureDrawn);
             onFigure.Invoke();
         }
     }
