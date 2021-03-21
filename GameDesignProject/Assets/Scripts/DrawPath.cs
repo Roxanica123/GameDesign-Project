@@ -54,9 +54,7 @@ public class DrawPath : MonoBehaviour
 
     void Draw()
     {
-        Vector2 point;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform,
-            Input.mousePosition, _camera, out point);
+        Vector2 point = _camera.ScreenToWorldPoint(Input.mousePosition);
         this._path.Add(transform.TransformPoint(point));
         this._lineRenderer.positionCount = _path.Count;
         this._lineRenderer.SetPositions(this._path.ToArray());

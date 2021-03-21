@@ -4,9 +4,9 @@ namespace Recognizer
     public class Result
     {
         private string name;
-        private float score;
+        private double score;
 
-        public Result(string name, float score)
+        public Result(string name, double score)
         {
             this.name = name;
             this.score = score;
@@ -18,7 +18,7 @@ namespace Recognizer
             set => name = value;
         }
 
-        public float Score
+        public double Score
         {
             get => score;
             set => score = value;
