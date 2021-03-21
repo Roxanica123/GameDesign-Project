@@ -12,14 +12,12 @@ namespace Recognizer
 {
     public class DollarRecognizer
     {
-        //
-        // one built-in unistroke per gesture type
-        //
+
         private const string path = "Assets\\Resources\\Unistrokes\\";
         private List<Unistroke> Unistrokes;
-        private float AngleRange = MathUtility.Deg2Rad((float) 45.0);
-        private float AnglePrecision = MathUtility.Deg2Rad((float) 2.0);
-        private float HalfDiagonal = (float) (0.5 * Math.Sqrt(250.0 * 250.0 + 250.0 * 250.0));
+        private double AngleRange = MathUtility.Deg2Rad(45.0);
+        private double AnglePrecision = MathUtility.Deg2Rad(2.0);
+        private double HalfDiagonal = (0.5 * Math.Sqrt(250.0 * 250.0 + 250.0 * 250.0));
         private List<Unistroke> candidates = new List<Unistroke>();
         public DollarRecognizer()
         {
@@ -35,9 +33,6 @@ namespace Recognizer
         }
 
 
-        //
-        // The $1 Gesture Recognizer API begins here -- 3 methods: Recognize(), AddGesture(), and DeleteUserGestures()
-        //
         public Result Recognize(List<Point> points)
         {
             var candidate = new Unistroke("Cerc", points);
@@ -45,7 +40,7 @@ namespace Recognizer
             //File.WriteAllText($"{path}cerc", JsonConvert.SerializeObject(candidates));
             var u = -1;
 
-            var b = Single.PositiveInfinity;
+            double b = Single.PositiveInfinity;
             for (var i = 0;
                 i < this.Unistrokes.Count;
                 i++) // for each unistroke template
@@ -60,29 +55,8 @@ namespace Recognizer
             }
 
             return (u == -1)
-                ? new Result("No match.", (float) 0.0)
-                : new Result(this.Unistrokes[u].Name, (float) (1.0 - b / HalfDiagonal));
+                ? new Result("No match.", 0.0)
+                : new Result(this.Unistrokes[u].Name, (1.0 - b / HalfDiagonal));
         }
-
-        /*this.AddGesture = function(name, points)
-        {
-            this.Unistrokes[this.Unistrokes.length] = new Unistroke(name, points); // append new unistroke
-
-            var num = 0;
-            for (var i = 0;
-                i < this.Unistrokes.length;
-                i++)
-            {
-                if (this.Unistrokes[i].Name == name)
-                    num++;
-            }
-
-            return num;
-        }
-        this.DeleteUserGestures = function()
-        {
-            this.Unistrokes.length = NumUnistrokes; // clear any beyond the original set
-            return NumUnistrokes;
-        }*/
     }
 }

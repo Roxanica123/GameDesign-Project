@@ -6,7 +6,7 @@ namespace Recognizer
     {
         public string Name { get; set; }
         public List<Point> Points { get; set; }
-        public float Radians { get; set; }
+        public double Radians { get; set; }
 
         public Unistroke(string name, List<Point> points)
         {
@@ -15,8 +15,8 @@ namespace Recognizer
 
             Radians = MathUtility.IndicativeAngle(this.Points);
             this.Points = MathUtility.RotateBy(this.Points, -Radians);
-            this.Points = MathUtility.ScaleTo(this.Points, (float) 250.0);
-            this.Points = MathUtility.TranslateTo(this.Points, new Point((float) 0.0, (float) 0.0));
+            this.Points = MathUtility.ScaleTo(this.Points, 250.0);
+            this.Points = MathUtility.TranslateTo(this.Points, new Point(0.0, 0.0));
         }
     }
 }

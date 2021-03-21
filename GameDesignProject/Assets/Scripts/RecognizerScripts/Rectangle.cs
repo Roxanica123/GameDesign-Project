@@ -3,12 +3,12 @@ namespace Recognizer
 {
     public class Rectangle
     {
-        private float x;
-        private float y;
-        private float width;
-        private float height;
+        private double x;
+        private double y;
+        private double width;
+        private double height;
 
-        public Rectangle(float x, float y, float width, float height)
+        public Rectangle(double x, double y, double width, double height)
         {
             this.x = x;
             this.y = y;
@@ -16,25 +16,25 @@ namespace Recognizer
             this.height = height;
         }
 
-        public float X
+        public double X
         {
             get => x;
             set => x = value;
         }
 
-        public float Y
+        public double Y
         {
             get => y;
             set => y = value;
         }
 
-        public float Width
+        public double Width
         {
             get => width;
             set => width = value;
         }
 
-        public float Height
+        public double Height
         {
             get => height;
             set => height = value;

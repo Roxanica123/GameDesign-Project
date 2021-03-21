@@ -5,45 +5,45 @@ namespace Recognizer
 {
     public static class MathUtility
     {
-        public static float DistanceAtAngle(List<Point> points, Unistroke t, float radians)
+        public static double DistanceAtAngle(List<Point> points, Unistroke t, double radians)
         {
             var newpoints = RotateBy(points, radians);
             return PathDistance(newpoints, t.Points);
         }
-        public static float DistanceAtBestAngle(List<Point> points, Unistroke T, float  a, float b, float threshold)
+        public static double DistanceAtBestAngle(List<Point> points, Unistroke T, double  a, double b, double threshold)
         {
             var Phi = 0.5 * (-1.0 + Math.Sqrt(5.0));
             var x1 = Phi * a + (1.0 - Phi) * b;
-            var f1 = DistanceAtAngle(points, T, (float)x1);
+            var f1 = DistanceAtAngle(points, T, x1);
             var x2 = (1.0 - Phi) * a + Phi * b;
-            var f2 = DistanceAtAngle(points, T, (float)x2);
+            var f2 = DistanceAtAngle(points, T, x2);
             while (Math.Abs(b - a) > threshold)
             {
                 if (f1 < f2)
                 {
-                    b = (float)x2;
+                    b = x2;
                     x2 = x1;
                     f2 = f1;
                     x1 = Phi * a + (1.0 - Phi) * b;
-                    f1 = DistanceAtAngle(points, T, (float)x1);
+                    f1 = DistanceAtAngle(points, T, x1);
                 }
                 else
                 {
-                    a = (float)x1;
+                    a = x1;
                     x1 = x2;
                     f1 = f2;
                     x2 = (1.0 - Phi) * a + Phi * b;
-                    f2 = DistanceAtAngle(points, T, (float)x2);
+                    f2 = DistanceAtAngle(points, T, x2);
                 }
             }
             return Math.Min(f1, f2);
         }
-        public static float IndicativeAngle(List<Point> points)
+        public static double IndicativeAngle(List<Point> points)
         {
             var c = Centroid(points);
-            return (float)Math.Atan2(c.Y - points[0].Y, c.X - points[0].X);
+            return Math.Atan2(c.Y - points[0].Y, c.X - points[0].X);
         }
-        public static List<Point> ScaleTo(List<Point>points, float size) // non-uniform scale; assumes 2D gestures (i.e., no lines)
+        public static List<Point> ScaleTo(List<Point>points, double size) // non-uniform scale; assumes 2D gestures (i.e., no lines)
         {
             var B = BoundingBox(points);
             var newpoints = new List<Point>();
@@ -80,7 +80,7 @@ namespace Recognizer
                 {
                     var qx = points[i - 1].X + ((I - D) / d) * (points[i].X - points[i - 1].X);
                     var qy = points[i - 1].Y + ((I - D) / d) * (points[i].Y - points[i - 1].Y);
-                    var q = new Point((float)qx, (float)qy);
+                    var q = new Point(qx, qy);
                     newpoints.Add(q); // append new point 'q'
                     points.Insert(i, q);
                     //points.splice(i, 0, q); // insert 'q' at position i in points s.t. 'q' will be the next i
@@ -93,7 +93,7 @@ namespace Recognizer
             return newpoints;
         }
 
-        public static List<Point> RotateBy(List<Point> points, float radians) // rotates points around centroid
+        public static List<Point> RotateBy(List<Point> points, double radians) // rotates points around centroid
         {
             var c = Centroid(points);
             var cos = Math.Cos(radians);
@@ -104,7 +104,7 @@ namespace Recognizer
                 var qx = (points[i].X - c.X) * cos - (points[i].Y - c.Y) * sin + c.X;
 
                 var qy = (points[i].X - c.X) * sin + (points[i].Y - c.Y) * cos + c.Y;
-                newpoints.Add(new Point((float) qx, (float) qy));
+                newpoints.Add(new Point(qx, qy));
             }
 
             return newpoints;
@@ -122,15 +122,15 @@ namespace Recognizer
 
             x /= points.Count;
             y /= points.Count;
-            return new Point((float) x, (float) y);
+            return new Point(x, y);
         }
 
         public static Rectangle BoundingBox(List<Point> points)
         {
-            var minX = Single.PositiveInfinity;
-            var maxX = Single.NegativeInfinity;
-            var minY = Single.PositiveInfinity;
-            var maxY = Single.NegativeInfinity;
+            double minX = Single.PositiveInfinity;
+            double maxX = Single.NegativeInfinity;
+            double minY = Single.PositiveInfinity;
+            double maxY = Single.NegativeInfinity;
 
             for (var i = 0; i < points.Count; i++)
             {
@@ -143,32 +143,32 @@ namespace Recognizer
             return new Rectangle(minX, minY, maxX - minX, maxY - minY);
         }
 
-        public static float PathDistance(List<Point> pts1, List<Point> pts2)
+        public static double PathDistance(List<Point> pts1, List<Point> pts2)
         {
             var d = 0.0;
             for (var i = 0; i < pts1.Count&& i < pts2.Count; i++) // assumes pts1.length == pts2.length
                 d += Distance(pts1[i], pts2[i]);
-            return (float) d / pts1.Count;
+            return d / pts1.Count;
         }
 
-        public static float PathLength(List<Point> points)
+        public static double PathLength(List<Point> points)
         {
             var d = 0.0;
             for (var i = 1; i < points.Count; i++)
                 d += Distance(points[i - 1], points[i]);
-            return (float) d;
+            return d;
         }
 
-        public static float Distance(Point p1, Point p2)
+        public static double Distance(Point p1, Point p2)
         {
             var dx = p2.X - p1.X;
             var dy = p2.Y - p1.Y;
-            return (float) Math.Sqrt(dx * dx + dy * dy);
+            return Math.Sqrt(dx * dx + dy * dy);
         }
 
-        public static float Deg2Rad(float d)
+        public static double Deg2Rad(double d)
         {
-            return (float) (d * Math.PI / 180.0);
+            return (d * Math.PI / 180.0);
         }
     }
 }
