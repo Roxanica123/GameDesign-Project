@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
-using Unity.Notifications.iOS;
 using UnityEngine;
 
 public class FiguresManager : MonoBehaviour

@@ -170,5 +170,6 @@ namespace Recognizer
         {
             return (d * Math.PI / 180.0);
         }
+
     }
 }

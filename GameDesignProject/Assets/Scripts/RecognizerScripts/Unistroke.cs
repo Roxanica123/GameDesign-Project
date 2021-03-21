@@ -12,7 +12,8 @@ namespace Recognizer
         {
             this.Name = name;
             this.Points = points;
-
+            this.Points = MathUtility.Resample(points, DollarRecognizer.NumberOfPoints);
+            
             Radians = MathUtility.IndicativeAngle(this.Points);
             this.Points = MathUtility.RotateBy(this.Points, -Radians);
             this.Points = MathUtility.ScaleTo(this.Points, 250.0);
