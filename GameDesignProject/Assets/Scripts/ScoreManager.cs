@@ -26,9 +26,9 @@ public class ScoreManager
         {
             if (zone.isInFrontOfZone(point))
             {
-                Combo = zone.BuildsCombo ? Combo + 1 : 1;
                 var score = zone.Score * Combo;
                 TotalScore += score;
+                Combo = zone.BuildsCombo ? Combo + 1 : 1;
                 return score;
             }
         }

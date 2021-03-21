@@ -8,7 +8,7 @@ public class ScoreZone
     public int Score { get; private set; }
     public bool BuildsCombo { get; private set; }
 
-    public ScoreZone(BoxCollider2D collider, int score, bool buildsCombo)
+    public ScoreZone(BoxCollider2D collider, int score = 1, bool buildsCombo = false)
     {
         this.collider = collider;
         Score = score;
