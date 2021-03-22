@@ -11,18 +11,27 @@ public class Note
     private readonly float _timeOfNote;
     private readonly float duration = 2;
     private readonly GameObject _reference;
+    private Vector3 SpawnPoint { get; }
+    private Vector3 EndPoint { get; }
+    public string Type { get; private set; }
+    public bool Hit { get; set; }
 
-    public Note(float time, GameObject notePrefab, Transform notesTransform)
+    public Note(float time, GameObject notePrefab, Transform notesTransform, Vector3 spawnPoint, Vector3 endPoint, string type)
     {
-        var newNote = GameObject.Instantiate(notePrefab, new Vector3(0, 1500, -5), Quaternion.identity);
+        var newNote = Object.Instantiate(notePrefab, new Vector3(0, 1500, -5), Quaternion.identity);
         newNote.transform.SetParent(notesTransform);
         _timeOfNote = time;
-        this._reference = newNote;
+        _reference = newNote;
+        SpawnPoint = spawnPoint;
+        EndPoint = endPoint; 
+        Type = type;
+        Hit = false;
+
     }
 
     private float GetY(float currTime)
     {
-        return ((_timeOfNote - currTime) / duration) * (FiguresManager.SpawnPoint.y - FiguresManager.EndPoint.y);
+        return ((_timeOfNote - currTime) / duration) * (SpawnPoint.y - EndPoint.y);
     }
 
     public void UpdateY(float currTime)
@@ -34,7 +43,7 @@ public class Note
 
     public bool HasPassedEndpoint()
     {
-        return this._reference.transform.position.y < FiguresManager.EndPoint.y;
+        return this._reference.transform.position.y < EndPoint.y;
     }
 
     public Vector3 GetPosition()

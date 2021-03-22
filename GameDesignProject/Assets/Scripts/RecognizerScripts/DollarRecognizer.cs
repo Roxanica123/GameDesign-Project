@@ -24,7 +24,7 @@ namespace Recognizer
         {
             NumberOfPoints = 64;
             var checkUnistrokes = JsonConvert.DeserializeObject<List<Unistroke>>(File.ReadAllText($"{path}check"));
-            var circleUnistrokes = JsonConvert.DeserializeObject<List<Unistroke>>(File.ReadAllText($"{path}cerc"));
+            var circleUnistrokes = JsonConvert.DeserializeObject<List<Unistroke>>(File.ReadAllText($"{path}circle"));
             //var lineUnistrokes = JsonConvert.DeserializeObject<List<Unistroke>>(File.ReadAllText($"{path}linie"));
 
             Unistrokes = new List<Unistroke>()
