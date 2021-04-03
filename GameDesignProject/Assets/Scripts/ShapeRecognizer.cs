@@ -8,21 +8,17 @@ using Point = Recognizer.Point;
 public class ShapeRecognizer : MonoBehaviour
 {
     private DrawPath _drawPath;
-    private RecognizerAlgo _recognizer = new RecognizerAlgo();
+    private RecognizerAlgo _recognizer;
     [SerializeField] private double accuracyTreshold = 0.7;
     [FormerlySerializedAs("OnFigure")] public UnityEvent onFigure = new UnityEvent();
 
-    private string figureDrawn = "";
+    private string _figureDrawn = "";
 
     // Start is called before the first frame update
     void Start()
     {
+        this._recognizer = new RecognizerAlgo();
         this._drawPath = GameObject.FindWithTag("Playarea").GetComponent<DrawPath>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     public void OnShapeDrawn()
@@ -31,7 +27,7 @@ public class ShapeRecognizer : MonoBehaviour
         var result = _recognizer.Recognize(Vector3ToTimePointF(points));
         if (result.Score >= accuracyTreshold)
         {
-            figureDrawn = result.Name;
+            _figureDrawn = result.Name;
             onFigure.Invoke();
         }
     }
@@ -47,8 +43,5 @@ public class ShapeRecognizer : MonoBehaviour
         return shape;
     }
 
-    public string Shape
-    {
-        get { return figureDrawn; }
-    }
+    public string Shape => _figureDrawn;
 }
