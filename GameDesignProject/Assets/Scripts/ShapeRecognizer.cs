@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -10,9 +12,10 @@ public class ShapeRecognizer : MonoBehaviour
     private DrawPath _drawPath;
     private RecognizerAlgo _recognizer;
     [SerializeField] private double accuracyTreshold = 0.7;
-    [FormerlySerializedAs("OnFigure")] public UnityEvent onFigure = new UnityEvent();
+    public UnityEvent onFigure = new UnityEvent();
 
     private string _figureDrawn = "";
+    [SerializeField] private TextMeshProUGUI guessText;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +28,7 @@ public class ShapeRecognizer : MonoBehaviour
     {
         Vector3[] points = this._drawPath.GetPoints();
         var result = _recognizer.Recognize(Vector3ToTimePointF(points));
+        guessText.SetText($"{result.Name} - {Math.Round(result.Score * 100)}%");
         if (result.Score >= accuracyTreshold)
         {
             _figureDrawn = result.Name;
