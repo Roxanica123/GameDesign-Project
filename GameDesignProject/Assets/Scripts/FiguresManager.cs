@@ -68,8 +68,7 @@ public class FiguresManager : MonoBehaviour
                 var position = note.GetPosition();
                 _scoreManager.GetScoreUpdate(position);
                 note.Hit = true;
-                Debug.Log("Total score:" + _scoreManager.TotalScore);
-                Debug.Log("Combo:" + _scoreManager.Combo);
+                _scoreManager.Update();
                 //this is broken tho, gotta get the rules straight
             }
         }
