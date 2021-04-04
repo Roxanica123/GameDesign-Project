@@ -13,5 +13,7 @@ public class CameraSetupUtil : MonoBehaviour
             camera.orthographic = true;
             camera.orthographicSize = Screen.height / 2.0f;
         }
+
+        Screen.SetResolution(Screen.width, Screen.height, true);
     }
 }
