@@ -17,16 +17,15 @@ public class FiguresManager : MonoBehaviour
 
     void Start()
     {
-        _shapeRecognizer = GameObject.Find("GameManager").GetComponent<ShapeRecognizer>();
-
         this._notesList = new List<Note>();
         this._notesToRemove = new List<Note>();
-
         this._notesFactory = new NotesFactory();
-        this._scoreManager = new ScoreManager();
-        _scoreManager.AddScoreZone(new ScoreZone(GameObject.Find("GreenZone").GetComponent<BoxCollider2D>(), 2, true));
-        _scoreManager.AddScoreZone(new ScoreZone(GameObject.Find("RedZone1").GetComponent<BoxCollider2D>()));
-        _scoreManager.AddScoreZone(new ScoreZone(GameObject.Find("RedZone2").GetComponent<BoxCollider2D>()));
+        _shapeRecognizer = transform.GetComponent<ShapeRecognizer>();
+        _scoreManager = transform.GetComponent<ScoreManager>();
+        GameObject.FindGameObjectsWithTag("ScoreZone")
+            .Select(obj => obj.GetComponent<ScoreZone>())
+            .ToList()
+            .ForEach(zone => this._scoreManager.AddScoreZone(zone));
     }
 
     void Update()
@@ -39,7 +38,7 @@ public class FiguresManager : MonoBehaviour
             if (note.HasPassedEndpoint())
             {
                 if (note.Hit == false)
-                    _scoreManager.GetScoreUpdate(note.GetPosition());
+                    _scoreManager.UpdateScore(note.GetPosition());
                 Destroy(note.GameObject);
             }
         }
@@ -66,9 +65,8 @@ public class FiguresManager : MonoBehaviour
             if (note.Hit == false && shape == note.Type)
             {
                 var position = note.GetPosition();
-                _scoreManager.GetScoreUpdate(position);
+                _scoreManager.UpdateScore(position);
                 note.Hit = true;
-                _scoreManager.Update();
                 //this is broken tho, gotta get the rules straight
             }
         }

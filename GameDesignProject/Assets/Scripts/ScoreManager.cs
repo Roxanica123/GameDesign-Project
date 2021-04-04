@@ -1,11 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 
-public class ScoreManager
+public class ScoreManager : MonoBehaviour
 {
     private List<ScoreZone> scoreZones;
     public int TotalScore { get; private set; }
@@ -15,7 +14,10 @@ public class ScoreManager
     private Text scoreElement;
     private Text comboElement;
 
-    public ScoreManager()
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI comboText;
+
+    private void Awake()
     {
         scoreZones = new List<ScoreZone>();
         TotalScore = 0;
@@ -37,20 +39,22 @@ public class ScoreManager
         scoreZones.Add(scoreZone);
     }
 
-    public int GetScoreUpdate(Vector3 point)
+    public void UpdateScore(Vector3 point)
     {
         foreach (ScoreZone zone in scoreZones)
         {
-            if (zone.isInFrontOfZone(point))
+            if (zone.IsIn(point))
             {
                 var score = zone.Score * Combo;
                 TotalScore += score;
+                scoreText.SetText(TotalScore.ToString());
                 Combo = zone.BuildsCombo ? Combo + 1 : 1;
-                return score;
+                comboText.SetText(Combo.ToString());
+                return;
             }
         }
 
         Combo = 1;
-        return 0;
+        comboText.SetText(Combo.ToString());
     }
 }
