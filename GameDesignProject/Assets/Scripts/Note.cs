@@ -18,7 +18,7 @@ public class Note
 
     public Note(float time, GameObject notePrefab, Transform notesTransform, Vector3 spawnPoint, Vector3 endPoint, string type)
     {
-        var newNote = Object.Instantiate(notePrefab, new Vector3(0, 1500, -5), Quaternion.identity);
+        var newNote = Object.Instantiate(notePrefab, new Vector3(spawnPoint.x, 1500, -5), Quaternion.identity);
         newNote.transform.SetParent(notesTransform);
         _timeOfNote = time;
         _reference = newNote;
@@ -26,7 +26,6 @@ public class Note
         EndPoint = endPoint; 
         Type = type;
         Hit = false;
-
     }
 
     private float GetY(float currTime)
