@@ -3,29 +3,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 import soundfile
 import json
-import sounddevice as sd
 import time
-
-# filename = 'soundtrack.wav'
-# DURATION = 60
-# WINDOW = 5
-# THRESHOLD = .8
-# ACTIVATIONS_NEEDED = 4
 
 filename = 'soundtrack1.wav'
 DURATION = 60
 WINDOW = 5
-THRESHOLD = .84
-ACTIVATIONS_NEEDED = 2
+THRESHOLD = .8
+ACTIVATIONS_NEEDED = 4
+
+# filename = 'soundtrack1.wav'
+# DURATION = 60
+# WINDOW = 5
+# THRESHOLD = .84
+# ACTIVATIONS_NEEDED = 2
 
 
-# filename = 'soundtrack3.wav'
+# filename = 'soundtrack2.wav'
 # DURATION = 60
 # WINDOW = 5
 # THRESHOLD = .935
 # ACTIVATIONS_NEEDED = 1
 
-# filename = 'soundtrack4.wav'
+# filename = 'soundtrack3.wav'
 # DURATION = 60
 # WINDOW = 5
 # THRESHOLD = .93
@@ -119,15 +118,11 @@ for beat_time in beats_plp.tolist():
 
 clicks = librosa.clicks(times[to_click], sr=sr, length=len(y))
 
+if __name__ == '__main__':
+    soundfile.write(f'output_songs/{filename}', y + clicks, sr)
+    with open(f"output_beatmap/{filename}.json", "w") as file:
+        file.write(json.dumps({"times": times[to_click].tolist()}))
 
-soundfile.write(f'output_songs/{filename}', y + clicks, sr)
-with open(f"output_beatmap/{filename}.json", "w") as file:
-    file.write(json.dumps({"times": times[to_click].tolist()}))
-
-
-# sd.play(y + clicks, sr)
-# time.sleep(DURATION)
-# sd.stop()
 
 
 
