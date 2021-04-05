@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class FiguresManager : MonoBehaviour
@@ -13,23 +10,24 @@ public class FiguresManager : MonoBehaviour
     {
         public float[] times;
     }
+
+    private const string SOUNDTRACK_NAME = "soundtrack1";
+    private AudioClip _drumHitClip;
     
     private List<Note> _notesList;
-    private List<Note> _notesToRemove;
     private ScoreManager _scoreManager;
     private NotesFactory _notesFactory;
     private ShapeRecognizer _shapeRecognizer;
-
     private AudioSource _audioSource;
     private Queue<float> _beatmapTimings;
 
     private void LoadBeatmap()
     {
-        var audioClip = Resources.Load<AudioClip>("Sound/soundtrack");
+        var audioClip = Resources.Load<AudioClip>($"Sound/{SOUNDTRACK_NAME}");
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.clip = audioClip;
 
-        var timings = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>("Beatmaps/soundtrack1.wav").text).times;
+        var timings = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{SOUNDTRACK_NAME}").text).times;
         _beatmapTimings = new Queue<float>(timings);
     }
 
@@ -39,7 +37,6 @@ public class FiguresManager : MonoBehaviour
     void Start()
     {
         this._notesList = new List<Note>();
-        this._notesToRemove = new List<Note>();
         this._notesFactory = new NotesFactory();
         _shapeRecognizer = transform.GetComponent<ShapeRecognizer>();
         _scoreManager = transform.GetComponent<ScoreManager>();
@@ -47,6 +44,8 @@ public class FiguresManager : MonoBehaviour
             .Select(obj => obj.GetComponent<ScoreZone>())
             .ToList()
             .ForEach(zone => this._scoreManager.AddScoreZone(zone));
+
+        _drumHitClip = Resources.Load<AudioClip>("Sound_Effects/drum-hit");
         
         LoadBeatmap();
         Play();
@@ -68,33 +67,8 @@ public class FiguresManager : MonoBehaviour
         
         
         if (_beatmapTimings.Peek() - _audioSource.time <= 2)
-            SpawnNote(_beatmapTimings.Dequeue());
+            SpawnNote(_beatmapTimings.Dequeue() - 0.1f);
     }
-
-    // void Update()
-    // {
-    //     this._timer += Time.deltaTime;
-    //
-    //     foreach (Note note in _notesList)
-    //     {
-    //         note.UpdateY(_timer);
-    //         if (note.HasPassedEndpoint())
-    //         {
-    //             if (note.Hit == false)
-    //                 _scoreManager.UpdateScore(note.GetPosition());
-    //             Destroy(note.GameObject);
-    //         }
-    //     }
-    //
-    //     _notesList.RemoveAll(note => note.HasPassedEndpoint());
-    //
-    //     if (_timer - _lastSpawnTime >= 2)
-    //     {
-    //         SpawnNote(_timer + 2);
-    //         _lastSpawnTime = _timer;
-    //     }
-    // }
-
     
     
     private void SpawnNote(float time)
@@ -102,20 +76,7 @@ public class FiguresManager : MonoBehaviour
         _notesList.Add(_notesFactory.GetRandomNote(time));
     }
 
-    // public void OnNewShape()
-    // {
-    //     string shape = _shapeRecognizer.Shape;
-    //     foreach (Note note in _notesList)
-    //     {
-    //         if (note.Hit == false && shape == note.Type)
-    //         {
-    //             var position = note.GetPosition();
-    //             _scoreManager.UpdateScore(position);
-    //             note.Hit = true;
-    //             //this is broken tho, gotta get the rules straight
-    //         }
-    //     }
-    // }
+
 
     public void OnNewShape()
     {
@@ -128,6 +89,9 @@ public class FiguresManager : MonoBehaviour
 
         if (notesToCheck.Count > 0)
             if (_scoreManager.UpdateScore(notesToCheck[0].GetPosition()))
+            {
                 notesToCheck[0].Hit = true;
+                _audioSource.PlayOneShot(_drumHitClip);
+            }
     }
 }

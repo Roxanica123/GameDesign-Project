@@ -29,7 +29,8 @@ public class NotesFactory
 
     public Note GetRandomNote(float duration)
     {
-        var note = prefabs.ElementAt((int) (Random.Range(0, prefabs.Count)));
+        // var note = prefabs.ElementAt((int) (Random.Range(0, prefabs.Count)));
+        var note = prefabs.ElementAt(1);
         return new Note(duration, note.Value, NotesTransform, SpawnPoint, EndPoint, note.Key);
     }
 }
