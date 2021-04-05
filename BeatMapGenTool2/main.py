@@ -6,6 +6,7 @@ import argparse
 import pyaudio
 import wave
 import json
+import sys
 
 CHUNK = 1024
 
@@ -44,18 +45,25 @@ sr = wf.getframerate()
 # play stream (3)
 still_pressed = False
 while len(data) > 0:
-    stream.write(data)
-    data = wf.readframes(CHUNK)
-    frame_count += CHUNK
+    try:
+        stream.write(data)
+        data = wf.readframes(CHUNK)
+        frame_count += CHUNK
 
-    if keyboard.is_pressed("z") or keyboard.is_pressed("x") and not still_pressed:
-        still_pressed = True
-        while keyboard.is_pressed("z") or keyboard.is_pressed("x"):
-            stream.write(data)
-            data = wf.readframes(CHUNK)
-            frame_count += CHUNK
-        still_pressed = False
-        print(f"Beat at {frame_count / sr}")
+        if keyboard.is_pressed("z") or keyboard.is_pressed("x") and not still_pressed:
+            still_pressed = True
+            while keyboard.is_pressed("z") or keyboard.is_pressed("x"):
+                stream.write(data)
+                data = wf.readframes(CHUNK)
+                frame_count += CHUNK
+            still_pressed = False
+            beats.append(frame_count / sr)
+            print(f"Beat at {frame_count / sr}")
+    except KeyboardInterrupt:
+        with open(args.output, "w") as f:
+            f.write(json.dumps({"times": beats}))
+        print(f"Saved beatmap to {args.output}")
+        sys.exit()
 
 # stop stream (4)
 stream.stop_stream()
@@ -67,3 +75,4 @@ p.terminate()
 # Save file
 with open(args.output, "w") as f:
     f.write(json.dumps({"times": beats}))
+print(f"Saved beatmap to {args.output}")
