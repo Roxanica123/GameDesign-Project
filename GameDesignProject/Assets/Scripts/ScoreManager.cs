@@ -8,6 +8,7 @@ public class ScoreManager : MonoBehaviour
     private List<ScoreZone> scoreZones;
     public int TotalScore { get; private set; }
     public int Combo { get; private set; }
+    
 
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI comboText;
@@ -24,7 +25,13 @@ public class ScoreManager : MonoBehaviour
         scoreZones.Add(scoreZone);
     }
 
-    public void UpdateScore(Vector3 point)
+    public void MissedNote()
+    {
+        Combo = 1;
+        comboText.SetText(Combo.ToString());
+    }
+
+    public bool UpdateScore(Vector3 point)
     {
         foreach (ScoreZone zone in scoreZones)
         {
@@ -35,11 +42,18 @@ public class ScoreManager : MonoBehaviour
                 scoreText.SetText(TotalScore.ToString());
                 Combo = zone.BuildsCombo ? Combo + 1 : 1;
                 comboText.SetText(Combo.ToString());
-                return;
+                return true;
             }
         }
 
-        Combo = 1;
-        comboText.SetText(Combo.ToString());
+        return false;
+    }
+
+    public bool IsInAnyScoreZone(Vector3 point)
+    {
+        foreach (ScoreZone zone in scoreZones)
+            if (zone.IsIn(point))
+                return true;
+        return false;
     }
 }

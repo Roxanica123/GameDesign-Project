@@ -6,6 +6,7 @@ namespace PauseMenu
     public class PauseMenu : MonoBehaviour
     {
         public bool IsGamePaused { get; private set; }
+        private FiguresManager _figuremanager;
         private GameObject _menuUI;
 
         void Start()
@@ -13,20 +14,21 @@ namespace PauseMenu
             IsGamePaused = false;
             _menuUI = GameObject.Find("PauseMenuPanel");
             _menuUI.SetActive(false);
+            _figuremanager = GameObject.Find("GameManager").GetComponent<FiguresManager>();
         }
 
 
         public void Pause()
         {
             _menuUI.SetActive(true);
-            Time.timeScale = 0f;
+            _figuremanager.Pause();
             IsGamePaused = true;
         }
 
         public void Resume()
         {
             _menuUI.SetActive(false);
-            Time.timeScale = 1f;
+            _figuremanager.Play();
             IsGamePaused = false;
         }
 
