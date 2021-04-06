@@ -1,15 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 
-public class ScoreManager
+public class ScoreManager : MonoBehaviour
 {
     private List<ScoreZone> scoreZones;
     public int TotalScore { get; private set; }
     public int Combo { get; private set; }
+    
 
-    public ScoreManager()
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI comboText;
+
+    private void Awake()
     {
         scoreZones = new List<ScoreZone>();
         TotalScore = 0;
@@ -20,19 +24,36 @@ public class ScoreManager
     {
         scoreZones.Add(scoreZone);
     }
-    public int GetScoreUpdate(Vector3 point)
+
+    public void MissedNote()
     {
-        foreach(ScoreZone zone in scoreZones)
+        Combo = 1;
+        comboText.SetText(Combo.ToString());
+    }
+
+    public bool UpdateScore(Vector3 point)
+    {
+        foreach (ScoreZone zone in scoreZones)
         {
-            if (zone.isInFrontOfZone(point))
+            if (zone.IsIn(point))
             {
                 var score = zone.Score * Combo;
                 TotalScore += score;
+                scoreText.SetText(TotalScore.ToString());
                 Combo = zone.BuildsCombo ? Combo + 1 : 1;
-                return score;
+                comboText.SetText(Combo.ToString());
+                return true;
             }
         }
-        Combo = 1;
-        return 0;
+
+        return false;
+    }
+
+    public bool IsInAnyScoreZone(Vector3 point)
+    {
+        foreach (ScoreZone zone in scoreZones)
+            if (zone.IsIn(point))
+                return true;
+        return false;
     }
 }

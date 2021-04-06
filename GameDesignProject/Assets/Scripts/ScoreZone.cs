@@ -1,22 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class ScoreZone
+public class ScoreZone : MonoBehaviour
 {
-    private BoxCollider2D collider;
-    public int Score { get; private set; }
-    public bool BuildsCombo { get; private set; }
+    private BoxCollider2D _collider;
+    [SerializeField] private int score;
+    [SerializeField]private bool buildsCombo;
+    public int Score => score;
+    public bool BuildsCombo => buildsCombo;
 
-    public ScoreZone(BoxCollider2D collider, int score = 1, bool buildsCombo = false)
+    void Start()
     {
-        this.collider = collider;
-        Score = score;
-        BuildsCombo = buildsCombo;
+        this._collider = transform.GetComponent<BoxCollider2D>();
     }
 
-    public bool isInFrontOfZone(Vector3 point)
+    public bool IsIn(Vector3 point)
     {
-        return collider.OverlapPoint(point);
+        return _collider.OverlapPoint(point);
     }
 }
