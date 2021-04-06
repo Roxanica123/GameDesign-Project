@@ -13,7 +13,7 @@ public class FiguresManager : MonoBehaviour
 
     private const string SOUNDTRACK_NAME = "soundtrack1";
     private AudioClip _drumHitClip;
-    
+
     private List<Note> _notesList;
     private ScoreManager _scoreManager;
     private NotesFactory _notesFactory;
@@ -27,7 +27,8 @@ public class FiguresManager : MonoBehaviour
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.clip = audioClip;
 
-        var timings = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{SOUNDTRACK_NAME}").text).times;
+        var timings = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{SOUNDTRACK_NAME}").text)
+            .times;
         _beatmapTimings = new Queue<float>(timings);
     }
 
@@ -46,7 +47,7 @@ public class FiguresManager : MonoBehaviour
             .ForEach(zone => this._scoreManager.AddScoreZone(zone));
 
         _drumHitClip = Resources.Load<AudioClip>("Sound_Effects/drum-hit");
-        
+
         LoadBeatmap();
         Play();
     }
@@ -63,19 +64,20 @@ public class FiguresManager : MonoBehaviour
                 Destroy(note.GameObject);
             }
         }
+
         _notesList.RemoveAll(note => note.HasPassedEndpoint());
-        
-        
-        if (_beatmapTimings.Peek() - _audioSource.time <= 2)
+
+
+        if (_beatmapTimings.Count > 0 && _beatmapTimings.Peek() - _audioSource.time <= 2)
             SpawnNote(_beatmapTimings.Dequeue() - 0.1f);
+
     }
-    
-    
+
+
     private void SpawnNote(float time)
     {
         _notesList.Add(_notesFactory.GetRandomNote(time));
     }
-
 
 
     public void OnNewShape()
