@@ -31,8 +31,7 @@ public class NotesFactory
 
     public Note GetRandomNote(float duration)
     {
-        // var note = prefabs.ElementAt((int) (Random.Range(0, prefabs.Count)));
-        var note = prefabs.ElementAt(1);
+        var note = prefabs.ElementAt((int) (Random.Range(0, prefabs.Count)));
         int index = Random.Range(0, Zones.Length);
         SpawnPoint = new Vector3(Zones[index] * 285, Screen.height / 2.0f, -5);
         EndPoint = new Vector3(Zones[index] * 285, -Screen.height / 2.0f, -5);

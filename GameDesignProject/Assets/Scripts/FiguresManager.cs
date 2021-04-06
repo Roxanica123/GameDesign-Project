@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FiguresManager : MonoBehaviour
 {
@@ -70,7 +71,10 @@ public class FiguresManager : MonoBehaviour
 
         if (_beatmapTimings.Count > 0 && _beatmapTimings.Peek() - _audioSource.time <= 2)
             SpawnNote(_beatmapTimings.Dequeue() - 0.1f);
-
+        if (_beatmapTimings.Count == 0 && _notesList.Count == 0 && EndGameMenu.Ended == false)
+        {
+            EndGameMenu.EndGame(_scoreManager.TotalScore);
+        }
     }
 
 
