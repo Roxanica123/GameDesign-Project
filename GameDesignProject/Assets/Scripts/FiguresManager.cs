@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class FiguresManager : MonoBehaviour
 {
@@ -21,14 +22,34 @@ public class FiguresManager : MonoBehaviour
     private ShapeRecognizer _shapeRecognizer;
     private AudioSource _audioSource;
     private Queue<float> _beatmapTimings;
+    private PlayerData _playerData;
+    private string path;
+
+    [Serializable]
+    private class Level
+    {
+        public int index;
+        public string trackName;
+        public string filename;
+        public int score;
+        public int stars;
+    }
+
+    [Serializable]
+    private class PlayerData
+    {
+        public List<Level> levelsList;
+        public int starsCounter;
+    }
 
     private void LoadBeatmap()
     {
-        var audioClip = Resources.Load<AudioClip>($"Sound/{SOUNDTRACK_NAME}");
+        string filename = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].filename;
+        var audioClip = Resources.Load<AudioClip>($"Sound/{filename}");
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.clip = audioClip;
 
-        var timings = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{SOUNDTRACK_NAME}").text)
+        var timings = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text)
             .times;
         _beatmapTimings = new Queue<float>(timings);
     }
@@ -38,6 +59,9 @@ public class FiguresManager : MonoBehaviour
 
     void Start()
     {
+        path = Application.persistentDataPath + "/GameDesignProject/savefiles/savefile.json";
+        Debug.Log("Received index: " + PlayerPrefs.GetInt("levelIndex"));
+        LoadPlayerData();
         this._notesList = new List<Note>();
         this._notesFactory = new NotesFactory();
         _shapeRecognizer = transform.GetComponent<ShapeRecognizer>();
@@ -51,6 +75,16 @@ public class FiguresManager : MonoBehaviour
 
         LoadBeatmap();
         Play();
+    }
+
+    private void LoadPlayerData()
+    {
+        //_playerData = JsonUtility.FromJson<PlayerData>(Resources.Load<TextAsset>($"Levels/levels").text);
+        _playerData = JsonUtility.FromJson<PlayerData>(File.ReadAllText(path));
+        for (int i = 0; i < _playerData.levelsList.Count; ++i)
+        {
+            Debug.Log("Name: " + _playerData.levelsList[i].trackName);
+        }
     }
 
     private void Update()
@@ -73,6 +107,23 @@ public class FiguresManager : MonoBehaviour
             SpawnNote(_beatmapTimings.Dequeue() - 0.1f);
         if (_beatmapTimings.Count == 0 && _notesList.Count == 0 && EndGameMenu.Ended == false)
         {
+            int prevScore = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score;
+            int prevStars = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].stars;
+            if (prevScore < _scoreManager.TotalScore)
+                _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score = _scoreManager.TotalScore;
+
+            // Sectiune de test pentru update-ul sprite-ului de la star rating; De modificat conform logicii dorite
+            int stars = 3;
+            if (prevStars < stars)
+            {
+                _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].stars = stars;
+                _playerData.starsCounter += stars - prevStars;
+            }
+                
+
+            string saveData = JsonUtility.ToJson(_playerData);
+            File.WriteAllText(path, saveData);
+            PlayerPrefs.DeleteKey("levelIndex");
             EndGameMenu.EndGame(_scoreManager.TotalScore);
         }
     }
