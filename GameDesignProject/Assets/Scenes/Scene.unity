@@ -8565,6 +8565,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90678709deae142fbb1a54158b4d6f80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tapTreshold: 50
   accuracyTreshold: 0.5
   onFigure:
     m_PersistentCalls:
