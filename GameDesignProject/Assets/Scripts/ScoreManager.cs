@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,7 +9,9 @@ public class ScoreManager : MonoBehaviour
     private List<ScoreZone> scoreZones;
     public int TotalScore { get; private set; }
     public int Combo { get; private set; }
-    
+    public int MaxCombo { get; private set; }
+    public int CombosLost { get; private set; }
+
 
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI comboText;
@@ -18,6 +21,8 @@ public class ScoreManager : MonoBehaviour
         scoreZones = new List<ScoreZone>();
         TotalScore = 0;
         Combo = 1;
+        MaxCombo = 5;
+        CombosLost = 0;
     }
 
     public void AddScoreZone(ScoreZone scoreZone)
@@ -28,6 +33,7 @@ public class ScoreManager : MonoBehaviour
     public void MissedNote()
     {
         Combo = 1;
+        CombosLost += 1;
         comboText.SetText(Combo.ToString());
     }
 
@@ -40,7 +46,7 @@ public class ScoreManager : MonoBehaviour
                 var score = zone.Score * Combo;
                 TotalScore += score;
                 scoreText.SetText(TotalScore.ToString());
-                Combo = zone.BuildsCombo ? Combo + 1 : 1;
+                Combo = Math.Min(zone.BuildsCombo ? Combo + 1 : 1, MaxCombo);
                 comboText.SetText(Combo.ToString());
                 return true;
             }
@@ -55,5 +61,10 @@ public class ScoreManager : MonoBehaviour
             if (zone.IsIn(point))
                 return true;
         return false;
+    }
+
+    public int GetStars()
+    {
+        return 0;
     }
 }

@@ -30,6 +30,11 @@ class NotesGenerator
                 currentTimestamp = _timestamps.Dequeue();
             }
 
+            if (currentTimestamp - _last < newNote.Duration)
+            {
+                _notesFactory.GetNoteWithDuration(currentTimestamp - _last, 0);
+            }
+
             newNote.SetTimeOfNote(currentTimestamp);
             GeneratedNotes.Add(newNote);
             _last = currentTimestamp;

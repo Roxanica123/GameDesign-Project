@@ -10,6 +10,7 @@ public class NotesFactory
     private Vector3 SpawnPoint { get; set; }
     private Vector3 EndPoint { get; set; }
     private int[] Zones = {-1, 0, 1};
+    private float Speed { get; set; }
 
     public NotesFactory()
     {
@@ -17,8 +18,9 @@ public class NotesFactory
         prefabs = new Dictionary<string, NoteTemplate>()
         {
             {"circle", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCircle"), (float) 1.5)},
-            {"check", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCheck"), (float) 1)}
+            {"check", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCheck"), 1)}
         };
+        Speed = (float) 1.5;
     }
 
     public Note GetNote(string type, float time)
@@ -27,7 +29,19 @@ public class NotesFactory
         SpawnPoint = new Vector3(Zones[index] * 285, Screen.height / 2.0f, -5);
         EndPoint = new Vector3(Zones[index] * 285, -Screen.height / 2.0f, -5);
         return new Note(time, prefabs[type].Prefab, NotesTransform, SpawnPoint, EndPoint, type,
-            prefabs[type].NoteDuration);
+            prefabs[type].NoteDuration, Speed);
+    }
+
+    public Note GetNoteWithDuration(float duration, float time)
+    {
+        KeyValuePair<string, NoteTemplate> noteTemplate = prefabs.FirstOrDefault(x => x.Value.NoteDuration <= duration);
+        if (noteTemplate.Key != null)
+        {
+            return new Note(time, noteTemplate.Value.Prefab, NotesTransform, SpawnPoint, EndPoint, noteTemplate.Key,
+                noteTemplate.Value.NoteDuration, Speed);
+        }
+
+        return null;
     }
 
     public Note GetRandomNote(float time)
@@ -37,6 +51,6 @@ public class NotesFactory
         SpawnPoint = new Vector3(Zones[index] * 285, Screen.height / 2.0f, -5);
         EndPoint = new Vector3(Zones[index] * 285, -Screen.height / 2.0f, -5);
         return new Note(time, note.Value.Prefab, NotesTransform, SpawnPoint, EndPoint, note.Key,
-            note.Value.NoteDuration);
+            note.Value.NoteDuration, Speed);
     }
 }
