@@ -12,11 +12,13 @@ namespace Recognizer
 {
     public class DollarRecognizer
     {
+        private const string path = "Assets\\Resources\\Unistrokes\\";
         public static int NumberOfPoints { get; private set; }
         private readonly double _angleRange = MathUtility.Deg2Rad(45.0);
         private readonly double _anglePrecision = MathUtility.Deg2Rad(2.0);
         private readonly double _halfDiagonal = (0.5 * Math.Sqrt(250.0 * 250.0 + 250.0 * 250.0));
         private readonly List<Unistroke> _unistrokes;
+        private List<Unistroke> candidates = new List<Unistroke>();
 
         public DollarRecognizer()
         {
@@ -36,7 +38,9 @@ namespace Recognizer
 
         public Result Recognize(List<Point> points)
         {
-            var candidate = new Unistroke("", points);
+            var candidate = new Unistroke("star", points);
+            // candidates.Add(candidate);
+            // File.WriteAllText($"{path}star.json", JsonConvert.SerializeObject(candidates));
             var u = -1;
 
             double b = Single.PositiveInfinity;

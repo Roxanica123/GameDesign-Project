@@ -15,6 +15,7 @@ public class EndGameMenu : MonoBehaviour
         _menuUI = GameObject.Find("EndGameMenuPanel");
         _text = GameObject.Find("EndGameScore").GetComponent<Text>();
         _menuUI.SetActive(false);
+        Ended = false;
     }
 
     // Update is called once per frame

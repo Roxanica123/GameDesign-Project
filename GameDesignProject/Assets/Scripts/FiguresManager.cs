@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class FiguresManager : MonoBehaviour
 {
@@ -20,17 +21,37 @@ public class FiguresManager : MonoBehaviour
     private NotesFactory _notesFactory;
     private ShapeRecognizer _shapeRecognizer;
     private AudioSource _audioSource;
+    private NotesGenerator _notesGenerator;
     private Queue<float> _beatmapTimings;
+    private PlayerData _playerData;
+    private string path;
 
-    private void LoadBeatmap()
+    [Serializable]
+    private class Level
     {
-        var audioClip = Resources.Load<AudioClip>($"Sound/{SOUNDTRACK_NAME}");
+        public int index;
+        public string trackName;
+        public string filename;
+        public int score;
+        public int stars;
+    }
+
+    [Serializable]
+    private class PlayerData
+    {
+        public List<Level> levelsList;
+        public int starsCounter;
+    }
+
+
+    private float[] LoadBeatmap()
+    {
+        string filename = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].filename;
+        var audioClip = Resources.Load<AudioClip>($"Sound/{filename}");
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.clip = audioClip;
 
-        var timings = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{SOUNDTRACK_NAME}").text)
-            .times;
-        _beatmapTimings = new Queue<float>(timings);
+        return JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text).times;
     }
 
     public void Play() => _audioSource.Play();
@@ -38,6 +59,9 @@ public class FiguresManager : MonoBehaviour
 
     void Start()
     {
+        path = Application.persistentDataPath + "/GameDesignProject/savefiles/savefile.json";
+        Debug.Log("Received index: " + PlayerPrefs.GetInt("levelIndex"));
+        LoadPlayerData();
         this._notesList = new List<Note>();
         this._notesFactory = new NotesFactory();
         _shapeRecognizer = transform.GetComponent<ShapeRecognizer>();
@@ -49,8 +73,19 @@ public class FiguresManager : MonoBehaviour
 
         _drumHitClip = Resources.Load<AudioClip>("Sound_Effects/drum-hit");
 
-        LoadBeatmap();
+        _notesGenerator = new NotesGenerator(LoadBeatmap());
+        _notesList = _notesGenerator.GeneratedNotes;
         Play();
+    }
+
+    private void LoadPlayerData()
+    {
+        //_playerData = JsonUtility.FromJson<PlayerData>(Resources.Load<TextAsset>($"Levels/levels").text);
+        _playerData = JsonUtility.FromJson<PlayerData>(File.ReadAllText(path));
+        for (int i = 0; i < _playerData.levelsList.Count; ++i)
+        {
+            Debug.Log("Name: " + _playerData.levelsList[i].trackName);
+        }
     }
 
     private void Update()
@@ -69,18 +104,27 @@ public class FiguresManager : MonoBehaviour
         _notesList.RemoveAll(note => note.HasPassedEndpoint());
 
 
-        if (_beatmapTimings.Count > 0 && _beatmapTimings.Peek() - _audioSource.time <= 2)
-            SpawnNote(_beatmapTimings.Dequeue() - 0.1f);
-        if (_beatmapTimings.Count == 0 && _notesList.Count == 0 && EndGameMenu.Ended == false)
+        if (_notesList.Count == 0 && EndGameMenu.Ended == false)
         {
+            int prevScore = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score;
+            int prevStars = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].stars;
+            if (prevScore < _scoreManager.TotalScore)
+                _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score = _scoreManager.TotalScore;
+
+            // Sectiune de test pentru update-ul sprite-ului de la star rating; De modificat conform logicii dorite
+            int stars = 3;
+            if (prevStars < stars)
+            {
+                _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].stars = stars;
+                _playerData.starsCounter += stars - prevStars;
+            }
+                
+
+            string saveData = JsonUtility.ToJson(_playerData);
+            File.WriteAllText(path, saveData);
+            PlayerPrefs.DeleteKey("levelIndex");
             EndGameMenu.EndGame(_scoreManager.TotalScore);
         }
-    }
-
-
-    private void SpawnNote(float time)
-    {
-        _notesList.Add(_notesFactory.GetRandomNote(time));
     }
 
 
