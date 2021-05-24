@@ -51,8 +51,7 @@ public class FiguresManager : MonoBehaviour
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.clip = audioClip;
 
-        var timings = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text)
-            .times;
+        return JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text).times;
     }
 
     public void Play() => _audioSource.Play();
