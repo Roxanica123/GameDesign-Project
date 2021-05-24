@@ -47,6 +47,7 @@ public class ScoreManager : MonoBehaviour
                 TotalScore += score;
                 scoreText.SetText(TotalScore.ToString());
                 Combo = Math.Min(zone.BuildsCombo ? Combo + 1 : 1, MaxCombo);
+                if (!zone.BuildsCombo) CombosLost++;
                 comboText.SetText(Combo.ToString());
                 return true;
             }
@@ -63,8 +64,8 @@ public class ScoreManager : MonoBehaviour
         return false;
     }
 
-    public int GetStars()
+    public int GetStars(int difficulty)
     {
-        return 0;
+        return Math.Min(Math.Max(5 - ((CombosLost + difficulty - 1) / 2) + 1, 0), 5);
     }
 }

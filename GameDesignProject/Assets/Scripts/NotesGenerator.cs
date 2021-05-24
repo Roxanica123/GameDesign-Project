@@ -32,7 +32,8 @@ class NotesGenerator
 
             if (currentTimestamp - _last < newNote.Duration)
             {
-                _notesFactory.GetNoteWithDuration(currentTimestamp - _last, 0);
+                newNote = _notesFactory.GetNoteWithDuration(currentTimestamp - _last, 0);
+                if (newNote == null) return;
             }
 
             newNote.SetTimeOfNote(currentTimestamp);

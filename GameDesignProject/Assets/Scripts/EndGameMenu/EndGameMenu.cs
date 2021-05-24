@@ -35,7 +35,7 @@ public class EndGameMenu : MonoBehaviour
         SceneManager.LoadScene("Scene");
     }
 
-    public static void EndGame(int score)
+    public static void EndGame(int score, int combosLost, int stars)
     {
         _menuUI.SetActive(true);
         _text.text = _text.text + " " + score;

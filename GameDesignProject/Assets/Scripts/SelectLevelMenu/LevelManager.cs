@@ -13,6 +13,7 @@ public class LevelManager : MonoBehaviour
     //public Text[] starMilestonesText;
     public Text[] lockedStarsText;
     public LevelSelection[] levelSelections;
+
     public Text starCount;
     //private List<Level> _levels;
 
@@ -62,6 +63,7 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        
         for (int i = 0; i < _playerData.levelsList.Count; ++i)
         {
             levelSelections[i].levelIndex = _playerData.levelsList[i].index;
@@ -89,6 +91,7 @@ public class LevelManager : MonoBehaviour
                 currentData.levelsList[i].trackName = templateData.levelsList[i].trackName;
                 currentData.levelsList[i].filename = templateData.levelsList[i].filename;
             }
+
             if (currentData.levelsList.Count < templateData.levelsList.Count)
             {
                 int diff = templateData.levelsList.Count - currentData.levelsList.Count;
@@ -97,6 +100,7 @@ public class LevelManager : MonoBehaviour
                     currentData.levelsList.Add(templateData.levelsList[i]);
                 }
             }
+
             string saveData = JsonUtility.ToJson(currentData);
             File.WriteAllText(path, saveData);
         }
@@ -112,7 +116,7 @@ public class LevelManager : MonoBehaviour
     {
         for (int i = 0; i < levelSelections.Length; ++i)
         {
-            if(levelSelections[i].isUnlocked == false)
+            if (levelSelections[i].isUnlocked == false)
             {
                 lockedStarsText[i].text = (levelSelections[i].minimumStars - _playerData.starsCounter).ToString();
             }
@@ -124,9 +128,9 @@ public class LevelManager : MonoBehaviour
         starCount.text = _playerData.starsCounter.ToString();
     }
 
-    public void SelectLevel(int _levelIndex)//MARKER this method is triggered when pressing one of the level buttons
+    public void SelectLevel(int _levelIndex) //MARKER this method is triggered when pressing one of the level buttons
     {
-        if(levelSelections[_levelIndex].isUnlocked == true)
+        if (levelSelections[_levelIndex].isUnlocked == true)
         {
             PlayerPrefs.SetInt("levelIndex", _levelIndex);
             //PlayerPrefs.SetInt("currLevelScore", levelSelections[_levelIndex].CurrBestScore);

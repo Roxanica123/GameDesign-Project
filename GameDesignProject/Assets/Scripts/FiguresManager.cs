@@ -13,7 +13,6 @@ public class FiguresManager : MonoBehaviour
         public float[] times;
     }
 
-    private const string SOUNDTRACK_NAME = "soundtrack1";
     private AudioClip _drumHitClip;
 
     private List<Note> _notesList;
@@ -22,7 +21,6 @@ public class FiguresManager : MonoBehaviour
     private ShapeRecognizer _shapeRecognizer;
     private AudioSource _audioSource;
     private NotesGenerator _notesGenerator;
-    private Queue<float> _beatmapTimings;
     private PlayerData _playerData;
     private string path;
 
@@ -34,6 +32,7 @@ public class FiguresManager : MonoBehaviour
         public string filename;
         public int score;
         public int stars;
+        public int difficulty;
     }
 
     [Serializable]
@@ -59,6 +58,7 @@ public class FiguresManager : MonoBehaviour
 
     void Start()
     {
+        
         path = Application.persistentDataPath + "/GameDesignProject/savefiles/savefile.json";
         Debug.Log("Received index: " + PlayerPrefs.GetInt("levelIndex"));
         LoadPlayerData();
@@ -90,6 +90,7 @@ public class FiguresManager : MonoBehaviour
 
     private void Update()
     {
+
         foreach (Note note in _notesList)
         {
             note.UpdateY(_audioSource.time);
@@ -108,22 +109,23 @@ public class FiguresManager : MonoBehaviour
         {
             int prevScore = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score;
             int prevStars = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].stars;
+            int difficulty = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].difficulty;
             if (prevScore < _scoreManager.TotalScore)
                 _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score = _scoreManager.TotalScore;
 
-            // Sectiune de test pentru update-ul sprite-ului de la star rating; De modificat conform logicii dorite
-            int stars = 3;
+            int stars = _scoreManager.GetStars(difficulty);
+
             if (prevStars < stars)
             {
                 _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].stars = stars;
                 _playerData.starsCounter += stars - prevStars;
             }
-                
+
 
             string saveData = JsonUtility.ToJson(_playerData);
             File.WriteAllText(path, saveData);
             PlayerPrefs.DeleteKey("levelIndex");
-            EndGameMenu.EndGame(_scoreManager.TotalScore);
+            EndGameMenu.EndGame(_scoreManager.TotalScore, _scoreManager.CombosLost, stars);
         }
     }
 

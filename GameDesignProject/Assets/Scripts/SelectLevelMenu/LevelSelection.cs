@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,14 +14,25 @@ public class LevelSelection : MonoBehaviour
     public int minimumStars;
     public Text lockLevelName;
     public Text unlockLevelName;
+
     public Text score;
+
     //public Text stars;
     public Image stars;
     private int currBestScore;
     private int currStarRating;
 
-    public int CurrBestScore { get => currBestScore; set => currBestScore = value; }
-    public int CurrStarRating { get => currStarRating; set => currStarRating = value; }
+    public int CurrBestScore
+    {
+        get => currBestScore;
+        set => currBestScore = value;
+    }
+
+    public int CurrStarRating
+    {
+        get => currStarRating;
+        set => currStarRating = value;
+    }
 
     //public int startLevel;
     //public int endLevel;
@@ -67,17 +79,17 @@ public class LevelSelection : MonoBehaviour
 
     private void UpdateStars()
     {
+        Debug.Log(currStarRating);
         if (isUnlocked)
         {
-            stars.sprite = Resources.LoadAll<Sprite>($"Sprites/star_rating")[currStarRating];
+            stars.sprite = Resources.LoadAll<Sprite>($"Sprites/star_rating")[Math.Min(currStarRating, 5)];
         }
     }
 
     private void UnlockLevel()
     {
-
         //if (LevelManager.instance.stars >= minimumStars)
-        if(FindObjectOfType<LevelManager>().stars >= minimumStars)
+        if (FindObjectOfType<LevelManager>().stars >= minimumStars)
         {
             isUnlocked = true;
         }
@@ -86,6 +98,4 @@ public class LevelSelection : MonoBehaviour
             isUnlocked = false;
         }
     }
-
-    
 }

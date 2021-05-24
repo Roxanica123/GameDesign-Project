@@ -5,21 +5,24 @@
       "trackName": "Wellerman - Sea Shanty / 220 KID x Billen Ted Remix by Nathan Evans",
       "filename": "soundtrack1",
       "score": 0,
-      "stars": 0
+      "stars": 0,
+	  "difficulty": 1
     },
     {
       "index": 1,
       "trackName": "Aaron Smith - Dancin / KRONO Remix",
       "filename": "soundtrack2",
       "score": 0,
-      "stars": 0
+      "stars": 0,
+	  "difficulty": 2
     },
     {
       "index": 2,
       "trackName": "Doja Cat - Say So / 80s' Synthwave Remix",
       "filename": "soundtrack3",
       "score": 0,
-      "stars": 0
+      "stars": 0,
+	  "difficulty": 3
     }
   ],
   "starsCounter":  0
