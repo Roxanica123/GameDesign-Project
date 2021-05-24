@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Playarea
   - ScoreZone
+  - Trail
   layers:
   - Default
   - TransparentFX
