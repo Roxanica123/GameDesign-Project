@@ -17,7 +17,6 @@ public class FiguresManager : MonoBehaviour
 
     private List<Note> _notesList;
     private ScoreManager _scoreManager;
-    private NotesFactory _notesFactory;
     private ShapeRecognizer _shapeRecognizer;
     private AudioSource _audioSource;
     private NotesGenerator _notesGenerator;
@@ -40,6 +39,7 @@ public class FiguresManager : MonoBehaviour
     {
         public List<Level> levelsList;
         public int starsCounter;
+        public int difficulty;
     }
 
 
@@ -58,12 +58,10 @@ public class FiguresManager : MonoBehaviour
 
     void Start()
     {
-        
         path = Application.persistentDataPath + "/GameDesignProject/savefiles/savefile.json";
         Debug.Log("Received index: " + PlayerPrefs.GetInt("levelIndex"));
         LoadPlayerData();
         this._notesList = new List<Note>();
-        this._notesFactory = new NotesFactory();
         _shapeRecognizer = transform.GetComponent<ShapeRecognizer>();
         _scoreManager = transform.GetComponent<ScoreManager>();
         GameObject.FindGameObjectsWithTag("ScoreZone")
@@ -73,7 +71,8 @@ public class FiguresManager : MonoBehaviour
 
         _drumHitClip = Resources.Load<AudioClip>("Sound_Effects/drum-hit");
 
-        _notesGenerator = new NotesGenerator(LoadBeatmap());
+        _notesGenerator = new NotesGenerator(LoadBeatmap(), 
+            _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].difficulty);
         _notesList = _notesGenerator.GeneratedNotes;
         Play();
     }
@@ -90,7 +89,6 @@ public class FiguresManager : MonoBehaviour
 
     private void Update()
     {
-
         foreach (Note note in _notesList)
         {
             note.UpdateY(_audioSource.time);
@@ -114,6 +112,8 @@ public class FiguresManager : MonoBehaviour
                 _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score = _scoreManager.TotalScore;
 
             int stars = _scoreManager.GetStars(difficulty);
+            Debug.Log("Difficulty" + difficulty);
+
 
             if (prevStars < stars)
             {

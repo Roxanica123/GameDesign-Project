@@ -79,7 +79,6 @@ public class LevelSelection : MonoBehaviour
 
     private void UpdateStars()
     {
-        Debug.Log(currStarRating);
         if (isUnlocked)
         {
             stars.sprite = Resources.LoadAll<Sprite>($"Sprites/star_rating")[Math.Min(currStarRating, 5)];

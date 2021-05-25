@@ -8,12 +8,14 @@ public class EndGameMenu : MonoBehaviour
 {
     private static GameObject _menuUI;
     private static Text _text;
+    private static Text _combos;
     public static bool Ended { get; private set; }
 
     void Start()
     {
         _menuUI = GameObject.Find("EndGameMenuPanel");
         _text = GameObject.Find("EndGameScore").GetComponent<Text>();
+        _combos = GameObject.Find("CombosLost").GetComponent<Text>();
         _menuUI.SetActive(false);
         Ended = false;
     }
@@ -39,6 +41,7 @@ public class EndGameMenu : MonoBehaviour
     {
         _menuUI.SetActive(true);
         _text.text = _text.text + " " + score;
+        _combos.text = _combos.text + " " + combosLost + " -> " + stars + " stars";
         Ended = true;
     }
 }

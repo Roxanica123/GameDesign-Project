@@ -11,10 +11,10 @@ class NotesGenerator
     public List<Note> GeneratedNotes { get; private set; }
     private float _last = 0;
 
-    public NotesGenerator(float[] timestamps)
+    public NotesGenerator(float[] timestamps, int difficulty)
     {
         _timestamps = new Queue<float>(timestamps);
-        _notesFactory = new NotesFactory();
+        _notesFactory = new NotesFactory(difficulty);
         GenerateNotes();
     }
 

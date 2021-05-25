@@ -29,6 +29,7 @@ public class LevelManager : MonoBehaviour
         public string filename;
         public int score;
         public int stars;
+        public int difficulty;
     }
 
     [Serializable]
@@ -36,6 +37,7 @@ public class LevelManager : MonoBehaviour
     {
         public List<Level> levelsList;
         public int starsCounter;
+        public int difficulty;
     }
 
     private void Awake()
@@ -90,6 +92,7 @@ public class LevelManager : MonoBehaviour
             {
                 currentData.levelsList[i].trackName = templateData.levelsList[i].trackName;
                 currentData.levelsList[i].filename = templateData.levelsList[i].filename;
+                currentData.levelsList[i].difficulty = templateData.levelsList[i].difficulty;
             }
 
             if (currentData.levelsList.Count < templateData.levelsList.Count)
@@ -108,6 +111,7 @@ public class LevelManager : MonoBehaviour
         {
             Directory.CreateDirectory(Application.persistentDataPath + "/GameDesignProject/savefiles");
             String saveData = JsonUtility.ToJson(templateData);
+            Debug.Log(saveData);
             File.AppendAllText(path, saveData);
         }
     }

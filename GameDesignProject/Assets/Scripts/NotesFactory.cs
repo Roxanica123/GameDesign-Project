@@ -12,7 +12,7 @@ public class NotesFactory
     private int[] Zones = {-1, 0, 1};
     private float Speed { get; set; }
 
-    public NotesFactory()
+    public NotesFactory(float difficulty)
     {
         NotesTransform = GameObject.Find("Notes").transform;
         prefabs = new Dictionary<string, NoteTemplate>()
@@ -20,7 +20,7 @@ public class NotesFactory
             {"circle", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCircle"), (float) 1.5)},
             {"check", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCheck"), 1)}
         };
-        Speed = (float) 1.5;
+        Speed = (float) (0.5 + (1.0 / ((0.25*difficulty)+0.75)));
     }
 
     public Note GetNote(string type, float time)
