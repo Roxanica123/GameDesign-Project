@@ -17,10 +17,14 @@ public class NotesFactory
         NotesTransform = GameObject.Find("Notes").transform;
         prefabs = new Dictionary<string, NoteTemplate>()
         {
-            {"circle", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCircle"), (float) 1.5)},
-            {"check", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCheck"), 1)}
+            {"circle", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCircle"), (float) 1.75)},
+            {"check", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyCheck"), 1)},
+            {"flash", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyFlash"), (float) 1.5)},
+            {"square", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummySquare"), (float) 2.75)},
+            {"star", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyStar"), (float) 3)},
+            {"x", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyX"), 2)}
         };
-        Speed = (float) (0.5 + (1.0 / ((0.25*difficulty)+0.75)));
+        Speed = (float) (0.75 + (1.0 / ((0.25 * difficulty) + 0.75)));
     }
 
     public Note GetNote(string type, float time)
