@@ -22,7 +22,8 @@ public class NotesFactory
             {"flash", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyFlash"), (float) 1.5)},
             {"square", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummySquare"), (float) 2.75)},
             {"star", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyStar"), (float) 3)},
-            {"x", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyX"), 2)}
+            {"x", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyX"), 2)},
+            {"tap", new NoteTemplate(Resources.Load<GameObject>("Prefabs/DummyTap"), (float) 0.3)}
         };
         Speed = (float) (0.75 + (1.0 / ((0.25 * difficulty) + 0.75)));
     }

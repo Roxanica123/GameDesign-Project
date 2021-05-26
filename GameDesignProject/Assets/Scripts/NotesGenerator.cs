@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 class NotesGenerator
 {
@@ -10,6 +11,7 @@ class NotesGenerator
     private NotesFactory _notesFactory;
     public List<Note> GeneratedNotes { get; private set; }
     private float _last = 0;
+    private float _tapProbability = (float) 0.6;
 
     public NotesGenerator(float[] timestamps, int difficulty)
     {
