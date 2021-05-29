@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-class NoteTemplate
+public class NoteTemplate
 {
     public GameObject Prefab { get; private set; }
     public float NoteDuration { get; private set; }
