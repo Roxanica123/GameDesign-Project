@@ -18,11 +18,11 @@ def get_random_note():
             return item[0]
 
 
-filename = 'soundtrack1.wav'
-DURATION = 90
-WINDOW = 5
-THRESHOLD = .8
-ACTIVATIONS_NEEDED = 4
+# filename = 'soundtrack1.wav'
+# DURATION = 90
+# WINDOW = 5
+# THRESHOLD = .8
+# ACTIVATIONS_NEEDED = 4
 
 # filename = 'soundtrack1.wav'
 # DURATION = 60
@@ -31,11 +31,11 @@ ACTIVATIONS_NEEDED = 4
 # ACTIVATIONS_NEEDED = 2
 
 
-# filename = 'soundtrack2.wav'
-# DURATION = 60
-# WINDOW = 5
-# THRESHOLD = .935
-# ACTIVATIONS_NEEDED = 1
+filename = 'soundtrack2.wav'
+DURATION = 60
+WINDOW = 5
+THRESHOLD = .935
+ACTIVATIONS_NEEDED = 1
 
 # filename = 'soundtrack3.wav'
 # DURATION = 60
