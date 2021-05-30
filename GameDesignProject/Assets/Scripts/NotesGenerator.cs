@@ -33,7 +33,7 @@ class NotesGenerator
 
         foreach (var timestamp in _timestamps)
         {
-            Debug.Log(timestamp.time);
+            // Debug.Log(timestamp.time);
             GeneratedNotes.Add(_notesFactory.GetNote(timestamp.shape, timestamp.time));
         }
     }

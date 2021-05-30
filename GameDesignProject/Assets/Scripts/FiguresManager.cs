@@ -21,6 +21,7 @@ public class FiguresManager : MonoBehaviour
     private AudioClip _drumHitClip;
 
     private List<Note> _notesList;
+    private float[] _tempo;
     private ScoreManager _scoreManager;
     private ShapeRecognizer _shapeRecognizer;
     private AudioSource _audioSource;
@@ -29,6 +30,8 @@ public class FiguresManager : MonoBehaviour
     private string path;
 
     public List<Note> currentNotes => _notesList;
+    public float[] Tempo => _tempo;
+    public AudioSource audioSource => _audioSource;
 
     [Serializable]
     private class Level
@@ -57,9 +60,11 @@ public class FiguresManager : MonoBehaviour
         _audioSource.clip = audioClip;
 
         var rez = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text);
-        Debug.Log(rez);
+        Debug.Log($"Rez: {rez.tempo.Length}");
+        this._tempo = rez.tempo;
         return rez.times;
     }
+
 
     public void Play() => _audioSource.Play();
     public void Pause() => _audioSource.Pause();
