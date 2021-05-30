@@ -35,7 +35,7 @@ public class Note
 
     private float GetY(float currTime)
     {
-        return ((_timeOfNote - currTime) / (Speed + (float) 0.25 * Duration)) * (SpawnPoint.y - EndPoint.y);
+        return ((_timeOfNote - currTime) / (Speed + (float) 0.25)) * (SpawnPoint.y - EndPoint.y);
     }
 
     public void UpdateY(float currTime)
