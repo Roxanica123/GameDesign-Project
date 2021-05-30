@@ -28,7 +28,8 @@ public class FiguresManager : MonoBehaviour
     private NotesGenerator _notesGenerator;
     private PlayerData _playerData;
     private string path;
-
+    private List<Vector3> velocitiesBak;
+    
     public List<Note> currentNotes => _notesList;
     public float[] Tempo => _tempo;
     public AudioSource audioSource => _audioSource;
@@ -65,8 +66,16 @@ public class FiguresManager : MonoBehaviour
     }
 
 
-    public void Play() => _audioSource.Play();
-    public void Pause() => _audioSource.Pause();
+    public void Play()
+    {
+        _audioSource.Play();
+        Time.timeScale = 1;
+    }
+    public void Pause()
+    {
+        _audioSource.Pause();
+        Time.timeScale = 0;
+    }
 
     void Start()
     {
