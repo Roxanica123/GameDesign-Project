@@ -1,15 +1,28 @@
+from random import random
+
 import librosa.display
 import matplotlib.pyplot as plt
 import numpy as np
 import soundfile
 import json
-import time
+from collections import deque
 
-filename = 'soundtrack1.wav'
-DURATION = 60
-WINDOW = 5
-THRESHOLD = .8
-ACTIVATIONS_NEEDED = 4
+shapes = {"circle": (1.75, 2), "check": (1, 4.5), "flash": (1.5, 7), "x": (2, 8), "square": (2.75, 8.5),
+          "star": (3, 10), "tap": (0.5, 15)}
+
+
+def get_random_note():
+    rand_number = random() * 15
+    for item in shapes.items():
+        if rand_number < item[1][1]:
+            return item[0]
+
+
+# filename = 'soundtrack1.wav'
+# DURATION = 90
+# WINDOW = 5
+# THRESHOLD = .8
+# ACTIVATIONS_NEEDED = 4
 
 # filename = 'soundtrack1.wav'
 # DURATION = 60
@@ -18,11 +31,11 @@ ACTIVATIONS_NEEDED = 4
 # ACTIVATIONS_NEEDED = 2
 
 
-# filename = 'soundtrack2.wav'
-# DURATION = 60
-# WINDOW = 5
-# THRESHOLD = .935
-# ACTIVATIONS_NEEDED = 1
+filename = 'soundtrack2.wav'
+DURATION = 60
+WINDOW = 5
+THRESHOLD = .935
+ACTIVATIONS_NEEDED = 1
 
 # filename = 'soundtrack3.wav'
 # DURATION = 60
@@ -44,12 +57,6 @@ S_DB = librosa.power_to_db(S, ref=np.max)
 
 fig, ax = plt.subplots()
 S_dB = librosa.power_to_db(S, ref=np.max)
-img = librosa.display.specshow(S_dB, x_axis='time',
-                               y_axis='mel', sr=sr,
-                               fmax=8000, ax=ax)
-fig.colorbar(img, ax=ax, format='%+2.0f dB')
-ax.set(title='Mel-frequency spectrogram')
-plt.show()
 
 freq_ranges = {
     "SUB_BASS": (0, 60),
@@ -70,15 +77,6 @@ mel_ranges = {key: (np.min(value), np.max(value)) for key, value in ranges_idx.i
 
 type_db_mean = {key: S_DB[low:high].mean(axis=0) for key, (low, high) in mel_ranges.items()}
 
-fig2, ax2 = plt.subplots()
-ax2.set_xlabel("Time")
-ax2.set_ylabel("Db")
-for key, value in type_db_mean.items():
-    ax2.plot(value, label=key)
-ax2.legend()
-plt.show()
-
-
 type_db_filtered = dict()
 for key, value in type_db_mean.items():
     arr = value - np.min(value)
@@ -92,37 +90,39 @@ for key, value in type_db_mean.items():
     threshold_filter = np.vectorize(lambda x0: 1 if x0 >= THRESHOLD * normalized_max else 0)
     type_db_filtered[key] = threshold_filter(normalized)
 
-fig3, ax3 = plt.subplots(2, figsize=(20, 10))
-ax3[0].set_xlabel("Time")
-ax3[0].set_ylabel("Activation")
-for i, (key, value) in enumerate(type_db_filtered.items()):
-    t = librosa.frames_to_time([i for i in range(len(value))], sr=sr, hop_length=hop_length, n_fft=n_fft)
-    ax3[0].plot(t, value + i * 1.1, label=key)
-
-ax3[1].plot(librosa.times_like(onset_env),
-            librosa.util.normalize(onset_env),
-            label='Onset strength')
-
-ax3[0].vlines(times[beats_plp], 0, 8, alpha=0.5, color='r',
-              linestyle='--', label='PLP Beats')
-
-plt.show()
-
 to_click = []
-allowed_channels = ["BASS", "LOWER_MIDRANGE", "MIDRANGE", "UPPER_MIDRANGE"]
+allowed_channels = ["BASS", "LOWER_MIDRANGE", "MIDRANGE", "UPPER_MIDRANGE", "PRESENCE", "BRILLIANCE"]
+
+dtempo = librosa.beat.tempo(onset_envelope=onset_env, sr=sr,
+                            aggregate=None)
+
+timestamps_with_shapes = {"times": [], "tempo": dtempo.tolist()}
 
 for beat_time in beats_plp.tolist():
-    activations = [key for key, value in type_db_filtered.items() if value[beat_time - WINDOW: beat_time + WINDOW].astype(bool).any() and key in allowed_channels]
+    activations = [key for key, value in type_db_filtered.items() if
+                   value[beat_time - WINDOW: beat_time + WINDOW].astype(bool).any() and key in allowed_channels]
     if len(activations) >= ACTIVATIONS_NEEDED:
+        # if i % 6 == 0:
+        #     timestamps_with_shapes["times"].append({"time": times[beat_time], "shape": "tap"})
+        # else:
         to_click.append(beat_time)
+        # i += 1
 
-clicks = librosa.clicks(times[to_click], sr=sr, length=len(y))
+times_queue = deque(times[to_click].tolist())
+last_time = 0
+while len(times_queue) != 0:
+    note = get_random_note()
+    note_time = shapes[note][0]
+    current_time = times_queue.popleft()
+    while len(times_queue) != 0 and current_time - last_time < note_time:
+        current_time = times_queue.popleft()
+    if current_time - last_time >= note_time:
+        timestamps_with_shapes["times"].append({"time": current_time, "shape": note})
+        last_time = current_time
+
+clicks = librosa.clicks(np.array([click["time"] for click in timestamps_with_shapes["times"]]), sr=sr, length=len(y))
 
 if __name__ == '__main__':
     soundfile.write(f'output_songs/{filename}', y + clicks, sr)
-    with open(f"output_beatmap/{filename}.json", "w") as file:
-        file.write(json.dumps({"times": times[to_click].tolist()}))
-
-
-
-
+    with open(f"output_beatmap/{filename[:-4]}.json", "w") as file:
+        file.write(json.dumps(timestamps_with_shapes))

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using UnityEngine.Events;
+using JetBrains.Annotations;
 
 public class FiguresManager : MonoBehaviour
 {
@@ -13,7 +14,8 @@ public class FiguresManager : MonoBehaviour
     [Serializable]
     private class BeatmapFile
     {
-        public float[] times;
+        public List<NotesGenerator.NoteTime> times;
+        public float[] tempo;
     }
 
     private AudioClip _drumHitClip;
@@ -47,15 +49,16 @@ public class FiguresManager : MonoBehaviour
         public int difficulty;
     }
 
-
-    private float[] LoadBeatmap()
+    private List<NotesGenerator.NoteTime> LoadBeatmap()
     {
         string filename = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].filename;
         var audioClip = Resources.Load<AudioClip>($"Sound/{filename}");
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.clip = audioClip;
 
-        return JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text).times;
+        var rez = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text);
+        Debug.Log(rez);
+        return rez.times;
     }
 
     public void Play() => _audioSource.Play();

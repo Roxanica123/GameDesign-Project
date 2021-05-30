@@ -8,51 +8,33 @@ using Random = UnityEngine.Random;
 
 class NotesGenerator
 {
-    private Queue<float> _timestamps;
-    private NotesFactory _notesFactory;
-    public List<Note> GeneratedNotes { get; private set; }
-    private float _last = 0;
-    private float _tapProbability = (float) 0.00;
-
-    public NotesGenerator(float[] timestamps, int difficulty)
+    [Serializable]
+    public class NoteTime
     {
-        _timestamps = new Queue<float>(timestamps);
+        public string shape;
+        public float time;
+    }
+
+    private readonly List<NoteTime> _timestamps;
+    private readonly NotesFactory _notesFactory;
+    public List<Note> GeneratedNotes { get; private set; }
+
+
+    public NotesGenerator(List<NoteTime> timestamps, int difficulty)
+    {
+        _timestamps = timestamps;
         _notesFactory = new NotesFactory(difficulty);
-        _tapProbability += (float) (difficulty / 50.0);
         GenerateNotes();
     }
 
     private void GenerateNotes()
     {
         GeneratedNotes = new List<Note>();
-        while (_timestamps.Count > 0)
+
+        foreach (var timestamp in _timestamps)
         {
-            var newNote = _notesFactory.GetRandomNote(0);
-            var currentTimestamp = _timestamps.Dequeue();
-            Queue<float> movingTimestamps = new Queue<float>();
-
-            while (_timestamps.Count > 0 && currentTimestamp - _last < newNote.Duration)
-            {
-                currentTimestamp = _timestamps.Dequeue();
-                if (Random.value < _tapProbability &&
-                    currentTimestamp - _last >= _notesFactory.Prefabs["tap"].NoteDuration)
-                {
-                    Debug.Log("aici");
-                    GeneratedNotes.Add(_notesFactory.GetNote("tap", currentTimestamp));
-                }
-
-                movingTimestamps.Enqueue(currentTimestamp);
-            }
-
-            if (currentTimestamp - _last < newNote.Duration)
-            {
-                newNote = _notesFactory.GetNoteWithDuration(currentTimestamp - _last, 0);
-                if (newNote == null) return;
-            }
-
-            newNote.SetTimeOfNote(currentTimestamp, movingTimestamps);
-            GeneratedNotes.Add(newNote);
-            _last = currentTimestamp;
+            Debug.Log(timestamp.time);
+            GeneratedNotes.Add(_notesFactory.GetNote(timestamp.shape, timestamp.time));
         }
     }
 }

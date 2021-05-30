@@ -39,6 +39,7 @@ public class Note
         Type = type;
         Speed = speed;
         Hit = false;
+        _timeOfSpawning = calculateTimeOfSpawn();
     }
 
     // private float GetY(float currTime)
