@@ -4,9 +4,12 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.Events;
 
 public class FiguresManager : MonoBehaviour
 {
+    public UnityEvent onNoteHit = new UnityEvent();
+    
     [Serializable]
     private class BeatmapFile
     {
@@ -22,6 +25,8 @@ public class FiguresManager : MonoBehaviour
     private NotesGenerator _notesGenerator;
     private PlayerData _playerData;
     private string path;
+
+    public List<Note> currentNotes => _notesList;
 
     [Serializable]
     private class Level
@@ -144,6 +149,7 @@ public class FiguresManager : MonoBehaviour
             {
                 notesToCheck[0].Hit = true;
                 _audioSource.PlayOneShot(_drumHitClip);
+                onNoteHit.Invoke();
             }
     }
 }
