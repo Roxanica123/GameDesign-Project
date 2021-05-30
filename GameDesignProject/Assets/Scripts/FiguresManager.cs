@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
 using UnityEngine.Events;
+using UnityEngine.Video;
 using JetBrains.Annotations;
 
 public class FiguresManager : MonoBehaviour
@@ -28,10 +29,12 @@ public class FiguresManager : MonoBehaviour
     private NotesGenerator _notesGenerator;
     private PlayerData _playerData;
     private string path;
+    private VideoPlayer _videoPlayer;
 
     public List<Note> currentNotes => _notesList;
     public float[] Tempo => _tempo;
     public AudioSource audioSource => _audioSource;
+    public VideoPlayer videoPlayer => _videoPlayer;
 
     [Serializable]
     private class Level
@@ -60,6 +63,9 @@ public class FiguresManager : MonoBehaviour
         _audioSource.clip = audioClip;
 
         var rez = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text);
+        var videoClip = Resources.Load<VideoClip>($"Gifs/{filename}");
+        _videoPlayer = gameObject.GetComponent<VideoPlayer>();
+        _videoPlayer.clip = videoClip;
         this._tempo = rez.tempo;
         return rez.times;
     }
