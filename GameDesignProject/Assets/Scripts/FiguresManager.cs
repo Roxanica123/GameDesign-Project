@@ -30,7 +30,7 @@ public class FiguresManager : MonoBehaviour
     private PlayerData _playerData;
     private string path;
     private VideoPlayer _videoPlayer;
-
+    
     public List<Note> currentNotes => _notesList;
     public float[] Tempo => _tempo;
     public AudioSource audioSource => _audioSource;
@@ -71,8 +71,16 @@ public class FiguresManager : MonoBehaviour
     }
 
 
-    public void Play() => _audioSource.Play();
-    public void Pause() => _audioSource.Pause();
+    public void Play()
+    {
+        _audioSource.Play();
+        Time.timeScale = 1;
+    }
+    public void Pause()
+    {
+        _audioSource.Pause();
+        Time.timeScale = 0;
+    }
 
     void Start()
     {
