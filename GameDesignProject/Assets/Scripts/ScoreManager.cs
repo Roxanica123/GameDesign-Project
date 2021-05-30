@@ -12,7 +12,6 @@ public class ScoreManager : MonoBehaviour
     public int MaxCombo { get; private set; }
     public int CombosLost { get; private set; }
 
-
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI comboText;
 
@@ -56,16 +55,33 @@ public class ScoreManager : MonoBehaviour
         return false;
     }
 
-    public bool IsInAnyScoreZone(Vector3 point)
+    public ScoreZone IsInAnyScoreZone(Vector3 point)
     {
         foreach (ScoreZone zone in scoreZones)
             if (zone.IsIn(point))
-                return true;
-        return false;
+                return zone;
+        return null;
     }
 
     public int GetStars(int difficulty)
     {
         return Math.Min(Math.Max(5 - ((CombosLost + difficulty - 1) / 2) + 1, 0), 5);
+    }
+
+    public void Glow(List<Note> notes)
+    {
+        foreach (Note note in notes)
+        {
+            ScoreZone zone = IsInAnyScoreZone(note.GetPosition());
+            if (zone != null && zone.BuildsCombo)
+            {
+                zone.Glow();
+                return;
+            }
+        }
+        foreach (var zone in scoreZones)
+        {
+            zone.ResetColor();
+        }
     }
 }

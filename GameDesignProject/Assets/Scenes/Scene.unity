@@ -5512,7 +5512,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   noTouches: 5
-  mouseMode: 1
+  mouseMode: 0
 --- !u!120 &308060925
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -5653,7 +5653,7 @@ Transform:
   m_GameObject: {fileID: 317782808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1080, y: 220, z: 1}
+  m_LocalScale: {x: 1080, y: 205, z: 1}
   m_Children: []
   m_Father: {fileID: 306452477}
   m_RootOrder: 0
@@ -6500,7 +6500,7 @@ Transform:
   m_GameObject: {fileID: 1043260469}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -220, z: 0}
-  m_LocalScale: {x: 1080, y: 220, z: 1}
+  m_LocalScale: {x: 1080, y: 250, z: 1}
   m_Children: []
   m_Father: {fileID: 306452477}
   m_RootOrder: 1
@@ -8026,7 +8026,7 @@ Transform:
   m_GameObject: {fileID: 1981548861}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -440, z: 0}
-  m_LocalScale: {x: 1080, y: 220, z: 1}
+  m_LocalScale: {x: 1080, y: 205, z: 1}
   m_Children: []
   m_Father: {fileID: 306452477}
   m_RootOrder: 2

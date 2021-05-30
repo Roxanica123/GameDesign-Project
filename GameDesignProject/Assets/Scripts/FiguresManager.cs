@@ -71,7 +71,7 @@ public class FiguresManager : MonoBehaviour
 
         _drumHitClip = Resources.Load<AudioClip>("Sound_Effects/drum-hit");
 
-        _notesGenerator = new NotesGenerator(LoadBeatmap(), 
+        _notesGenerator = new NotesGenerator(LoadBeatmap(),
             _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].difficulty);
         _notesList = _notesGenerator.GeneratedNotes;
         Play();
@@ -101,7 +101,7 @@ public class FiguresManager : MonoBehaviour
         }
 
         _notesList.RemoveAll(note => note.HasPassedEndpoint());
-
+        _scoreManager.Glow(_notesList);
 
         if (_notesList.Count == 0 && EndGameMenu.Ended == false)
         {
@@ -136,7 +136,7 @@ public class FiguresManager : MonoBehaviour
         List<Note> notesToCheck = _notesList
             .Where(note => note.Type == drawnShape)
             .Where(note => note.Hit == false)
-            .Where(note => _scoreManager.IsInAnyScoreZone(note.GetPosition()))
+            .Where(note => _scoreManager.IsInAnyScoreZone(note.GetPosition()) != null)
             .ToList();
 
         if (notesToCheck.Count > 0)
