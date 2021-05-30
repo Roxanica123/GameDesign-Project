@@ -60,7 +60,6 @@ public class FiguresManager : MonoBehaviour
         _audioSource.clip = audioClip;
 
         var rez = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text);
-        Debug.Log($"Rez: {rez.tempo.Length}");
         this._tempo = rez.tempo;
         return rez.times;
     }

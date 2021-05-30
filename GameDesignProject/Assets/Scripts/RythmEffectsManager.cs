@@ -20,10 +20,6 @@ public class RythmEffectsManager : MonoBehaviour
         this.startDirection = new Vector3(sidewaysForce, 0, 0);
         this.tempo = new Queue<float>(_figuresManager.Tempo);
         this._audioSource = _figuresManager.audioSource;
-        foreach (var f in _figuresManager.Tempo)
-        {
-            Debug.Log(f);
-        }
         StartCoroutine(nameof(KeepTempo));
     }
     
@@ -46,9 +42,7 @@ public class RythmEffectsManager : MonoBehaviour
         while (tempo.Count > 0)
         {
             float nextTempo = tempo.Dequeue();
-            Debug.Log($"The next tempo is at {nextTempo}");
             yield return new WaitUntil(() => _audioSource.time >= nextTempo);
-            Debug.Log("Tempo");
             OnTempo();
         }
     }
