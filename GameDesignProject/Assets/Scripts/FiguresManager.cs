@@ -74,11 +74,13 @@ public class FiguresManager : MonoBehaviour
     public void Play()
     {
         _audioSource.Play();
+        _videoPlayer.Play();
         Time.timeScale = 1;
     }
     public void Pause()
     {
         _audioSource.Pause();
+        _videoPlayer.Pause();
         Time.timeScale = 0;
     }
 
