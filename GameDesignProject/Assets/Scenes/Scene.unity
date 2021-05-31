@@ -9420,7 +9420,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bae7a5efc4354e60a0cbb2400b10b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sidewaysForce: 700
+  sidewaysForce: 1000
+  wiggleEvery: 2
 --- !u!82 &2132863230
 AudioSource:
   m_ObjectHideFlags: 0

@@ -7,6 +7,9 @@ public class RythmEffectsManager : MonoBehaviour
     private FiguresManager _figuresManager;
 
     [SerializeField] private float sidewaysForce = 5000f;
+    [SerializeField] private int wiggleEvery = 2;
+
+    private int wiggleCounter = 0;
     private Vector3 startDirection;
     private Queue<float> tempo;
     private AudioSource _audioSource;
@@ -28,8 +31,14 @@ public class RythmEffectsManager : MonoBehaviour
     {
         startDirection = new Vector3(-startDirection.x, 0, 0);
         foreach (Note note in this._figuresManager.currentNotes)
-            if (note != null)
-                note.rotate();
+        {
+            if (wiggleCounter % wiggleEvery == 0)
+            {
+                if (note != null)
+                    note.rotate();
+            }
+            wiggleCounter = (wiggleCounter + 1) % wiggleEvery;
+        }
     }
 
     private void OnTempo()
