@@ -130,7 +130,7 @@ public class FiguresManager : MonoBehaviour
         }
 
         _notesList.RemoveAll(note => note.HasPassedEndpoint());
-        _scoreManager.Glow(_notesList);
+        // _scoreManager.Glow(_notesList);
 
         if (_notesList.Count == 0 && EndGameMenu.Ended == false)
         {

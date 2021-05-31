@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class ScoreManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI comboText;
+    [SerializeField] private float glowTime = 0.1f;
 
     private void Awake()
     {
@@ -48,6 +50,7 @@ public class ScoreManager : MonoBehaviour
                 Combo = Math.Min(zone.BuildsCombo ? Combo + 1 : 1, MaxCombo);
                 if (!zone.BuildsCombo) CombosLost++;
                 comboText.SetText(Combo.ToString());
+                StartCoroutine(nameof(GlowZone), zone);
                 return true;
             }
         }
@@ -68,20 +71,28 @@ public class ScoreManager : MonoBehaviour
         return Math.Min(Math.Max(5 - ((CombosLost + difficulty - 1) / 2) + 1, 0), 5);
     }
 
-    public void Glow(List<Note> notes)
+    // public void Glow(List<Note> notes)
+    // {
+        // foreach (Note note in notes)
+        // {
+        //     ScoreZone zone = IsInAnyScoreZone(note.GetPosition());
+        //     if (zone != null && note.Hit) //&& zone.BuildsCombo
+        //     {
+        //         zone.Glow();
+        //         return;
+        //     }
+        // }
+        // foreach (var zone in scoreZones)
+        // {
+        //     zone.ResetColor();
+        // }
+    // }
+
+    private IEnumerator GlowZone(ScoreZone zone)
     {
-        foreach (Note note in notes)
-        {
-            ScoreZone zone = IsInAnyScoreZone(note.GetPosition());
-            if (zone != null && zone.BuildsCombo)
-            {
-                zone.Glow();
-                return;
-            }
-        }
-        foreach (var zone in scoreZones)
-        {
-            zone.ResetColor();
-        }
+        Debug.Log("Glowing zone");
+        zone.Glow();
+        yield return new WaitForSeconds(glowTime);
+        zone.ResetColor();
     }
 }
