@@ -8,11 +8,14 @@ public class RythmEffectsManager : MonoBehaviour
 
     [SerializeField] private float sidewaysForce = 5000f;
     [SerializeField] private int wiggleEvery = 2;
-
+    [SerializeField] private float shakeMagnitude = 50f;
+    [SerializeField] private float shakeDuration = 0.1f;
+    
     private int wiggleCounter = 0;
     private Vector3 startDirection;
     private Queue<float> tempo;
     private AudioSource _audioSource;
+    private Shaker _shaker;
 
     public Vector3 StartDirection => startDirection;
 
@@ -23,6 +26,7 @@ public class RythmEffectsManager : MonoBehaviour
         this.startDirection = new Vector3(sidewaysForce, 0, 0);
         this.tempo = new Queue<float>(_figuresManager.Tempo);
         this._audioSource = _figuresManager.audioSource;
+        this._shaker = Camera.main.transform.GetComponent<Shaker>();
         StartCoroutine(nameof(KeepTempo));
     }
     
@@ -31,19 +35,14 @@ public class RythmEffectsManager : MonoBehaviour
     {
         startDirection = new Vector3(-startDirection.x, 0, 0);
         foreach (Note note in this._figuresManager.currentNotes)
-        {
-            if (wiggleCounter % wiggleEvery == 0)
-            {
-                if (note != null)
+            if (note != null)
                     note.rotate();
-            }
-            wiggleCounter = (wiggleCounter + 1) % wiggleEvery;
-        }
     }
 
     private void OnTempo()
     {
         MoveNotesSideways();
+        StartCoroutine(_shaker.Shake(shakeDuration, shakeMagnitude));
     }
 
     private IEnumerator KeepTempo()
@@ -52,7 +51,9 @@ public class RythmEffectsManager : MonoBehaviour
         {
             float nextTempo = tempo.Dequeue();
             yield return new WaitUntil(() => _audioSource.time >= nextTempo);
-            OnTempo();
+            if (wiggleCounter % wiggleEvery == 0)
+                OnTempo();
+            wiggleCounter = (wiggleCounter + 1) % wiggleEvery;
         }
     }
 }
