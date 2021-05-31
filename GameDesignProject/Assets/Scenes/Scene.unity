@@ -9435,7 +9435,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sidewaysForce: 1000
   wiggleEvery: 2
-  shakeMagnitude: -1
+  shakeMagnitude: 5
   shakeDuration: 0.1
 --- !u!82 &2132863230
 AudioSource:
