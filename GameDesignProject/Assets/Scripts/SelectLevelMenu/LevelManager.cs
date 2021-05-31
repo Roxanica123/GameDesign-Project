@@ -74,6 +74,8 @@ public class LevelManager : MonoBehaviour
             levelSelections[i].CurrBestScore = _playerData.levelsList[i].score;
             levelSelections[i].CurrStarRating = _playerData.levelsList[i].stars;
         }
+
+        EndGameMenu.LevelManager = this;
     }
 
     private void Update()

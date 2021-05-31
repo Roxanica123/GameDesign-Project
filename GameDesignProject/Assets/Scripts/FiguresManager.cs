@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 public class FiguresManager : MonoBehaviour
 {
     public UnityEvent onNoteHit = new UnityEvent();
-    
+
     [Serializable]
     private class BeatmapFile
     {
@@ -30,7 +30,7 @@ public class FiguresManager : MonoBehaviour
     private PlayerData _playerData;
     private string path;
     private VideoPlayer _videoPlayer;
-    
+
     public List<Note> currentNotes => _notesList;
     public float[] Tempo => _tempo;
     public AudioSource audioSource => _audioSource;
@@ -77,6 +77,7 @@ public class FiguresManager : MonoBehaviour
         _videoPlayer.Play();
         Time.timeScale = 1;
     }
+
     public void Pause()
     {
         _audioSource.Pause();
@@ -152,8 +153,9 @@ public class FiguresManager : MonoBehaviour
 
             string saveData = JsonUtility.ToJson(_playerData);
             File.WriteAllText(path, saveData);
+            EndGameMenu.EndGame(_scoreManager.TotalScore, _scoreManager.CombosLost, stars,
+                PlayerPrefs.GetInt("levelIndex"));
             PlayerPrefs.DeleteKey("levelIndex");
-            EndGameMenu.EndGame(_scoreManager.TotalScore, _scoreManager.CombosLost, stars);
         }
     }
 
