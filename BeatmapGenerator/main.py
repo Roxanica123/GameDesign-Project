@@ -18,11 +18,11 @@ def get_random_note():
             return item[0]
 
 
-# filename = 'soundtrack1.wav'
-# DURATION = 90
-# WINDOW = 5
-# THRESHOLD = .8
-# ACTIVATIONS_NEEDED = 4
+filename = 'soundtrack1.wav'
+DURATION = 90
+WINDOW = 5
+THRESHOLD = .8
+ACTIVATIONS_NEEDED = 4
 
 # filename = 'soundtrack1.wav'
 # DURATION = 60
@@ -31,11 +31,11 @@ def get_random_note():
 # ACTIVATIONS_NEEDED = 2
 
 
-filename = 'soundtrack2.wav'
-DURATION = 60
-WINDOW = 5
-THRESHOLD = .935
-ACTIVATIONS_NEEDED = 1
+# filename = 'soundtrack2.wav'
+# DURATION = 60
+# WINDOW = 5
+# THRESHOLD = .935
+# ACTIVATIONS_NEEDED = 1
 
 # filename = 'soundtrack3.wav'
 # DURATION = 60
@@ -96,7 +96,8 @@ allowed_channels = ["BASS", "LOWER_MIDRANGE", "MIDRANGE", "UPPER_MIDRANGE", "PRE
 dtempo = librosa.beat.tempo(onset_envelope=onset_env, sr=sr,
                             aggregate=None)
 
-timestamps_with_shapes = {"times": [], "tempo": dtempo.tolist()}
+# timestamps_with_shapes = {"times": [], "tempo": dtempo.tolist()}
+timestamps_with_shapes = {"times": [], "tempo": times[beats_plp.tolist()].tolist()}
 
 for beat_time in beats_plp.tolist():
     activations = [key for key, value in type_db_filtered.items() if

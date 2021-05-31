@@ -4,10 +4,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.Events;
+using UnityEngine.Video;
 using JetBrains.Annotations;
 
 public class FiguresManager : MonoBehaviour
 {
+    public UnityEvent onNoteHit = new UnityEvent();
+    
     [Serializable]
     private class BeatmapFile
     {
@@ -18,12 +22,19 @@ public class FiguresManager : MonoBehaviour
     private AudioClip _drumHitClip;
 
     private List<Note> _notesList;
+    private float[] _tempo;
     private ScoreManager _scoreManager;
     private ShapeRecognizer _shapeRecognizer;
     private AudioSource _audioSource;
     private NotesGenerator _notesGenerator;
     private PlayerData _playerData;
     private string path;
+    private VideoPlayer _videoPlayer;
+    
+    public List<Note> currentNotes => _notesList;
+    public float[] Tempo => _tempo;
+    public AudioSource audioSource => _audioSource;
+    public VideoPlayer videoPlayer => _videoPlayer;
 
     [Serializable]
     private class Level
@@ -52,12 +63,26 @@ public class FiguresManager : MonoBehaviour
         _audioSource.clip = audioClip;
 
         var rez = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text);
-        Debug.Log(rez);
+        var videoClip = Resources.Load<VideoClip>($"Gifs/{filename}");
+        _videoPlayer = gameObject.GetComponent<VideoPlayer>();
+        _videoPlayer.clip = videoClip;
+        this._tempo = rez.tempo;
         return rez.times;
     }
 
-    public void Play() => _audioSource.Play();
-    public void Pause() => _audioSource.Pause();
+
+    public void Play()
+    {
+        _audioSource.Play();
+        _videoPlayer.Play();
+        Time.timeScale = 1;
+    }
+    public void Pause()
+    {
+        _audioSource.Pause();
+        _videoPlayer.Pause();
+        Time.timeScale = 0;
+    }
 
     void Start()
     {
@@ -147,6 +172,7 @@ public class FiguresManager : MonoBehaviour
             {
                 notesToCheck[0].Hit = true;
                 _audioSource.PlayOneShot(_drumHitClip);
+                onNoteHit.Invoke();
             }
     }
 }
