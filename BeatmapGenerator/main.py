@@ -18,32 +18,30 @@ def get_random_note():
             return item[0]
 
 
-filename = 'soundtrack1.wav'
-DURATION = 90
-WINDOW = 5
-THRESHOLD = .8
-ACTIVATIONS_NEEDED = 4
-
 # filename = 'soundtrack1.wav'
-# DURATION = 60
+# DURATION = 47
 # WINDOW = 5
-# THRESHOLD = .84
-# ACTIVATIONS_NEEDED = 2
-
+# THRESHOLD = .8
+# ACTIVATIONS_NEEDED = 4
+# OFFSET = 0
 
 # filename = 'soundtrack2.wav'
-# DURATION = 60
+# DURATION = 78
 # WINDOW = 5
-# THRESHOLD = .935
+# THRESHOLD = .84
 # ACTIVATIONS_NEEDED = 1
+# OFFSET = 15.5
 
-# filename = 'soundtrack3.wav'
-# DURATION = 60
-# WINDOW = 5
-# THRESHOLD = .93
-# ACTIVATIONS_NEEDED = 2
 
-y, sr = librosa.load(f"soundtracks/{filename}", duration=DURATION)
+filename = 'soundtrack3.wav'
+DURATION = 91
+WINDOW = 5
+THRESHOLD = .93
+ACTIVATIONS_NEEDED = 2
+OFFSET = 0
+
+
+y, sr = librosa.load(f"soundtracks/{filename}", duration=DURATION, offset=OFFSET)
 onset_env = librosa.onset.onset_strength(y=y, sr=sr)
 pulse = librosa.beat.plp(onset_envelope=onset_env, sr=sr)
 beats_plp = np.flatnonzero(librosa.util.localmax(pulse))
@@ -124,6 +122,6 @@ while len(times_queue) != 0:
 clicks = librosa.clicks(np.array([click["time"] for click in timestamps_with_shapes["times"]]), sr=sr, length=len(y))
 
 if __name__ == '__main__':
-    soundfile.write(f'output_songs/{filename}', y + clicks, sr)
+    soundfile.write(f'output_songs/{filename}', y, sr)
     with open(f"output_beatmap/{filename[:-4]}.json", "w") as file:
         file.write(json.dumps(timestamps_with_shapes))
