@@ -2,11 +2,11 @@
   "levelsList": [
     {
       "index": 0,
-      "trackName": "Wellerman - Sea Shanty / 220 KID x Billen Ted Remix by Nathan Evans",
-      "filename": "soundtrack1",
+      "trackName": "Doja Cat - Say So / 80s' Synthwave Remix",
+      "filename": "soundtrack3",
       "score": 0,
       "stars": 0,
-	  "difficulty": 1
+      "difficulty": 1
     },
     {
       "index": 1,
@@ -14,15 +14,15 @@
       "filename": "soundtrack2",
       "score": 0,
       "stars": 0,
-	  "difficulty": 2
+      "difficulty": 2
     },
     {
       "index": 2,
-      "trackName": "Doja Cat - Say So / 80s' Synthwave Remix",
-      "filename": "soundtrack3",
+      "trackName": "Wellerman - Sea Shanty / 220 KID x Billen Ted Remix by Nathan Evans",
+      "filename": "soundtrack1",
       "score": 0,
       "stars": 0,
-	  "difficulty": 3
+      "difficulty": 3
     }
   ],
   "starsCounter":  0
