@@ -3,36 +3,38 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 class NotesGenerator
 {
-    private Queue<float> _timestamps;
-    private NotesFactory _notesFactory;
-    public List<Note> GeneratedNotes { get; private set; }
-    private float _last = 0;
-
-    public NotesGenerator(float[] timestamps)
+    [Serializable]
+    public class NoteTime
     {
-        _timestamps = new Queue<float>(timestamps);
-        _notesFactory = new NotesFactory();
+        public string shape;
+        public float time;
+    }
+
+    private readonly List<NoteTime> _timestamps;
+    private readonly NotesFactory _notesFactory;
+    public List<Note> GeneratedNotes { get; private set; }
+
+
+    public NotesGenerator(List<NoteTime> timestamps, int difficulty)
+    {
+        _timestamps = timestamps;
+        _notesFactory = new NotesFactory(difficulty);
         GenerateNotes();
     }
 
     private void GenerateNotes()
     {
         GeneratedNotes = new List<Note>();
-        while (_timestamps.Count > 0)
-        {
-            var newNote = _notesFactory.GetRandomNote(0);
-            var currentTimestamp = _timestamps.Dequeue();
-            while (_timestamps.Count > 0 && currentTimestamp - _last < newNote.Duration)
-            {
-                currentTimestamp = _timestamps.Dequeue();
-            }
 
-            newNote.SetTimeOfNote(currentTimestamp);
-            GeneratedNotes.Add(newNote);
-            _last = currentTimestamp;
+        foreach (var timestamp in _timestamps)
+        {
+            // Debug.Log(timestamp.time);
+            GeneratedNotes.Add(_notesFactory.GetNote(timestamp.shape, timestamp.time));
         }
     }
 }

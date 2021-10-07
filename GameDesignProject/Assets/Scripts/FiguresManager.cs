@@ -4,27 +4,37 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine.Events;
+using UnityEngine.Video;
+using JetBrains.Annotations;
 
 public class FiguresManager : MonoBehaviour
 {
+    public UnityEvent onNoteHit = new UnityEvent();
+
     [Serializable]
     private class BeatmapFile
     {
-        public float[] times;
+        public List<NotesGenerator.NoteTime> times;
+        public float[] tempo;
     }
 
-    private const string SOUNDTRACK_NAME = "soundtrack1";
     private AudioClip _drumHitClip;
 
     private List<Note> _notesList;
+    private float[] _tempo;
     private ScoreManager _scoreManager;
-    private NotesFactory _notesFactory;
     private ShapeRecognizer _shapeRecognizer;
     private AudioSource _audioSource;
     private NotesGenerator _notesGenerator;
-    private Queue<float> _beatmapTimings;
     private PlayerData _playerData;
     private string path;
+    private VideoPlayer _videoPlayer;
+
+    public List<Note> currentNotes => _notesList;
+    public float[] Tempo => _tempo;
+    public AudioSource audioSource => _audioSource;
+    public VideoPlayer videoPlayer => _videoPlayer;
 
     [Serializable]
     private class Level
@@ -34,6 +44,7 @@ public class FiguresManager : MonoBehaviour
         public string filename;
         public int score;
         public int stars;
+        public int difficulty;
     }
 
     [Serializable]
@@ -41,21 +52,38 @@ public class FiguresManager : MonoBehaviour
     {
         public List<Level> levelsList;
         public int starsCounter;
+        public int difficulty;
     }
 
-
-    private float[] LoadBeatmap()
+    private List<NotesGenerator.NoteTime> LoadBeatmap()
     {
         string filename = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].filename;
         var audioClip = Resources.Load<AudioClip>($"Sound/{filename}");
         _audioSource = gameObject.GetComponent<AudioSource>();
         _audioSource.clip = audioClip;
 
-        return JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text).times;
+        var rez = JsonUtility.FromJson<BeatmapFile>(Resources.Load<TextAsset>($"Beatmaps/{filename}").text);
+        var videoClip = Resources.Load<VideoClip>($"Gifs/{filename}");
+        _videoPlayer = gameObject.GetComponent<VideoPlayer>();
+        _videoPlayer.clip = videoClip;
+        this._tempo = rez.tempo;
+        return rez.times;
     }
 
-    public void Play() => _audioSource.Play();
-    public void Pause() => _audioSource.Pause();
+
+    public void Play()
+    {
+        _audioSource.Play();
+        _videoPlayer.Play();
+        Time.timeScale = 1;
+    }
+
+    public void Pause()
+    {
+        _audioSource.Pause();
+        _videoPlayer.Pause();
+        Time.timeScale = 0;
+    }
 
     void Start()
     {
@@ -63,7 +91,6 @@ public class FiguresManager : MonoBehaviour
         Debug.Log("Received index: " + PlayerPrefs.GetInt("levelIndex"));
         LoadPlayerData();
         this._notesList = new List<Note>();
-        this._notesFactory = new NotesFactory();
         _shapeRecognizer = transform.GetComponent<ShapeRecognizer>();
         _scoreManager = transform.GetComponent<ScoreManager>();
         GameObject.FindGameObjectsWithTag("ScoreZone")
@@ -73,7 +100,8 @@ public class FiguresManager : MonoBehaviour
 
         _drumHitClip = Resources.Load<AudioClip>("Sound_Effects/drum-hit");
 
-        _notesGenerator = new NotesGenerator(LoadBeatmap());
+        _notesGenerator = new NotesGenerator(LoadBeatmap(),
+            _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].difficulty);
         _notesList = _notesGenerator.GeneratedNotes;
         Play();
     }
@@ -102,28 +130,32 @@ public class FiguresManager : MonoBehaviour
         }
 
         _notesList.RemoveAll(note => note.HasPassedEndpoint());
-
+        // _scoreManager.Glow(_notesList);
 
         if (_notesList.Count == 0 && EndGameMenu.Ended == false)
         {
             int prevScore = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score;
             int prevStars = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].stars;
+            int difficulty = _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].difficulty;
             if (prevScore < _scoreManager.TotalScore)
                 _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].score = _scoreManager.TotalScore;
 
-            // Sectiune de test pentru update-ul sprite-ului de la star rating; De modificat conform logicii dorite
-            int stars = 3;
+            int stars = _scoreManager.GetStars(difficulty);
+            Debug.Log("Difficulty" + difficulty);
+
+
             if (prevStars < stars)
             {
                 _playerData.levelsList[PlayerPrefs.GetInt("levelIndex")].stars = stars;
                 _playerData.starsCounter += stars - prevStars;
             }
-                
+
 
             string saveData = JsonUtility.ToJson(_playerData);
             File.WriteAllText(path, saveData);
+            EndGameMenu.EndGame(_scoreManager.TotalScore, _scoreManager.CombosLost, stars,
+                PlayerPrefs.GetInt("levelIndex"));
             PlayerPrefs.DeleteKey("levelIndex");
-            EndGameMenu.EndGame(_scoreManager.TotalScore);
         }
     }
 
@@ -134,7 +166,7 @@ public class FiguresManager : MonoBehaviour
         List<Note> notesToCheck = _notesList
             .Where(note => note.Type == drawnShape)
             .Where(note => note.Hit == false)
-            .Where(note => _scoreManager.IsInAnyScoreZone(note.GetPosition()))
+            .Where(note => _scoreManager.IsInAnyScoreZone(note.GetPosition()) != null)
             .ToList();
 
         if (notesToCheck.Count > 0)
@@ -142,6 +174,7 @@ public class FiguresManager : MonoBehaviour
             {
                 notesToCheck[0].Hit = true;
                 _audioSource.PlayOneShot(_drumHitClip);
+                onNoteHit.Invoke();
             }
     }
 }
